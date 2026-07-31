@@ -100,6 +100,11 @@ button{color:var(--ink)}
   padding:14px;margin:0 4px 22px;text-align:center;font-family:'Jua',sans-serif;font-size:18px}
 .notice .big{font-size:34px;display:block;margin-bottom:4px}
 .notice.time{background:#FFD9D3}
+.time-chip{display:block;text-align:center;font-family:'Jua',sans-serif;font-size:17px;
+  background:#fff;border:4px solid var(--ink);border-radius:999px;padding:9px 14px;
+  box-shadow:var(--shadow-sm);margin:0 auto 18px;max-width:260px}
+.time-chip.soon{background:#FFD9D3}
+.time-chip.over{background:#FFC4BC}
 
 .parent-btn{display:block;margin:6px auto 0;background:none;border:0;font-size:19px;
   opacity:.3;cursor:pointer;padding:10px}
@@ -307,7 +312,7 @@ button{color:var(--ink)}
 .rbtn{font-family:'Jua',sans-serif;font-size:26px;width:56px;height:56px;border:4px solid var(--ink);
   border-radius:50%;background:#FFE9A8;cursor:pointer;box-shadow:var(--shadow-sm)}
 .rbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
-.time-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.time-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .tbtn{font-family:'Jua',sans-serif;font-size:16px;border:4px solid var(--ink);border-radius:14px;
   padding:12px 4px;background:#E7F1FB;cursor:pointer}
 .tbtn.sel{background:var(--sun)}
@@ -348,6 +353,7 @@ button{color:var(--ink)}
       <p class="home-sub">오늘은 어떤 놀이를 할까?</p>
     </div>
     <div id="homeNotice"></div>
+    <div id="timeLeft"></div>
     <div class="star-bank">
       <div class="bank-top"><span class="bank-label">내 별</span><span class="bank-num" id="bankNum">0 / 10</span></div>
       <div class="bank-slots" id="bankSlots"></div>
@@ -436,6 +442,9 @@ button{color:var(--ink)}
         <button class="rbtn" id="starMinus">−</button>
         <span class="val" id="starVal">0</span>
         <button class="rbtn" id="starPlus">＋</button>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="bigbtn second" id="unlimitedToggle">⭐ 무제한 켜기</button>
       </div>
       <p style="font-size:13px;opacity:.6;margin:10px 0 0;text-align:center">
         놀이별 별(최대 5개)은 놀이 횟수 기록이라 줄어들지 않습니다</p>
@@ -535,7 +544,7 @@ function confetti(){
 
 /* ══════════════ 2. 저장 · 별 · 시간제한 ══════════════ */
 const MAX_POOL=10, MAX_PLAY_STARS=5, SAVE_KEY='haesol_playground_v3';
-let data = { pool:0, plays:{}, limitEnd:0 };
+let data = { pool:0, plays:{}, limitEnd:0, unlimited:false };
 
 function load(){
   try{
@@ -546,6 +555,7 @@ function load(){
         data.pool = Math.max(0, Math.min(MAX_POOL, o.pool||0));
         data.plays = o.plays||{};
         data.limitEnd = o.limitEnd||0;
+        data.unlimited = !!o.unlimited;
       }
     }
   }catch(e){}
@@ -569,13 +579,12 @@ function clearLimit(){ data.limitEnd=0; warned=false; save(); renderHome(); }
 setInterval(function(){
   if(!data.limitEnd) return;
   const left=limitLeft();
+  const atHome=$('#screen-home').classList.contains('is-active');
+  if(atHome) drawTimeLeft();
   if(left>0 && left<=60000 && !warned){
     warned=true; sfx.alert(); say('일 분 남았어요'); toast('⏰ 1분 남았어요!', 6000);
   }
-  if(left<=0){
-    if(!playing) renderHome();          // 놀이 중이면 그 판이 끝난 뒤 잠김
-    if($('#screen-home').classList.contains('is-active')) renderHome();
-  }
+  if(left<=0 && !playing && atHome) renderHome();
 }, 1000);
 
 /* ══════════════ 3. 놀이 목록 ══════════════ */
@@ -611,7 +620,7 @@ const GAMES = [
   {id:'shape',  name:'도형 찾기',   emoji:'🔷', kind:'spend', color:'#5FC7D3',
     options:[
       {key:'easy',  label:'쉬움',        note:'4개 중에서 찾기'},
-      {key:'normal',label:'보통',        note:'10개 중에서 찾기'},
+      {key:'normal',label:'보통',        note:'9개 중에서 찾기'},
       {key:'hard',  label:'어려움',      note:'20개 중에서 찾기'},
       {key:'vhard', label:'매우 어려움', note:'20개 · 비슷한 것끼리'}]},
   {id:'rps',    name:'가위바위보', emoji:'✌️', kind:'spend', color:'#F58FBE'}
@@ -627,10 +636,15 @@ function earnsStar(g,opt){
 
 /* ══════════════ 4. 홈 화면 ══════════════ */
 function renderHome(){
-  $('#bankNum').textContent = data.pool+' / '+MAX_POOL;
+  const unl=data.unlimited;
+  $('#bankNum').textContent = unl ? '무제한 ∞' : (data.pool+' / '+MAX_POOL);
   let slots='';
-  for(let i=0;i<MAX_POOL;i++) slots+='<div class="slot'+(i<data.pool?' on':'')+'">'+(i<data.pool?'⭐':'')+'</div>';
+  for(let i=0;i<MAX_POOL;i++){
+    const on = unl || i<data.pool;
+    slots+='<div class="slot'+(on?' on':'')+'">'+(on?'⭐':'')+'</div>';
+  }
   $('#bankSlots').innerHTML=slots;
+  drawTimeLeft();
 
   const locked = timeUp();
   $('#homeNotice').innerHTML = locked
@@ -641,7 +655,7 @@ function renderHome(){
   box.earn.innerHTML=''; box.spend.innerHTML='';
   GAMES.forEach(function(g,i){
     const plays=Math.min(data.plays[g.id]||0, MAX_PLAY_STARS);
-    const noStar = g.kind==='spend' && data.pool<=0;
+    const noStar = g.kind==='spend' && !unl && data.pool<=0;
     const off = locked || noStar;
     const tile=el('button','tile'+(off?' locked':''));
     tile.style.background=g.color;
@@ -651,7 +665,7 @@ function renderHome(){
       '<div class="tile-name">'+g.name+'</div>'+
       '<div class="tile-stars">'+rep('⭐',plays)+rep('☆',MAX_PLAY_STARS-plays)+'</div>'+
       (off?'<span class="lock">🔒</span>':'')+
-      (g.kind==='spend'&&!off?'<span class="cost">⭐−1</span>':'');
+      (g.kind==='spend'&&!off?'<span class="cost">'+(unl?'⭐∞':'⭐−1')+'</span>':'');
     tile.addEventListener('click', function(){
       if(locked){ sfx.bad(); say('오늘은 여기까지야'); return; }
       if(noStar){ sfx.bad(); say('별을 모아보자'); showNeedStar(); return; }
@@ -659,6 +673,15 @@ function renderHome(){
     });
     box[g.kind].appendChild(tile);
   });
+}
+function drawTimeLeft(){
+  const box=$('#timeLeft');
+  if(!box) return;
+  if(!data.limitEnd){ box.innerHTML=''; return; }
+  const left=limitLeft();
+  if(left<=0){ box.innerHTML='<span class="time-chip over">⏰ 시간 끝</span>'; return; }
+  const m=Math.ceil(left/60000);
+  box.innerHTML='<span class="time-chip'+(left<=60000?' soon':'')+'">⏰ 남은 시간 '+m+'분</span>';
 }
 function showNeedStar(){
   const n=el('div','notice','<span class="big">🔒 ⭐</span>별을 모아보자!<br><small>위쪽 놀이를 한 판 끝내면 별이 하나 생겨요</small>');
@@ -729,7 +752,7 @@ function openOptions(g){
 }
 function startGame(g,opt){
   if(timeUp()){ sfx.bad(); say('오늘은 여기까지야'); backHome(); return; }
-  if(g.kind==='spend'){
+  if(g.kind==='spend' && !data.unlimited){
     if(data.pool<=0){ sfx.bad(); say('별을 모아보자'); backHome(); showNeedStar(); return; }
     setPool(data.pool-1);
   }
@@ -759,12 +782,13 @@ function finish(o){
   if(g){
     addPlay(g.id);
     if(earnsStar(g,current.opt)){
-      if(data.pool>=MAX_POOL) note='별이 가득 찼어 (10개) · 아래 놀이에서 써 보자';
+      if(data.unlimited) note='⭐ 지금은 별 무제한이야';
+      else if(data.pool>=MAX_POOL) note='별이 가득 찼어 (10개) · 아래 놀이에서 써 보자';
       else { setPool(data.pool+1); note='⭐ 별을 하나 얻었어! (내 별 '+data.pool+'개)'; }
     }else if(g.kind==='earn'){
       note='이 난이도는 별이 없어 · ⭐ 표시된 난이도를 해보자';
     }else{
-      note='별 1개를 썼어 · 남은 별 '+data.pool+'개';
+      note = data.unlimited ? '⭐ 지금은 별 무제한이야' : '별 1개를 썼어 · 남은 별 '+data.pool+'개';
     }
   }
   $('#resStarInfo').textContent=note;
@@ -807,9 +831,6 @@ let pinBuf='';
     b.addEventListener('click', function(){ setLimit(m); refreshAdmin(); });
     row.appendChild(b);
   });
-  const c=el('button','tbtn','직접');
-  c.addEventListener('click', function(){ $('#customMin').focus(); });
-  row.appendChild(c);
 })();
 function drawPin(){
   let h='';
@@ -843,12 +864,19 @@ $('#btnParent').addEventListener('click', function(){
 });
 $('#pinCancel').addEventListener('click', function(){ $('#pinGate').classList.remove('show'); });
 function refreshAdmin(){
-  $('#starVal').textContent=data.pool;
+  $('#starVal').textContent = data.unlimited ? '∞' : data.pool;
+  $('#unlimitedToggle').textContent = data.unlimited ? '⭐ 무제한 끄기' : '⭐ 무제한 켜기';
+  $('#unlimitedToggle').className = 'bigbtn '+(data.unlimited?'warn':'second');
+  $('#starMinus').disabled = $('#starPlus').disabled = data.unlimited;
   const left=limitLeft();
   $('#limitState').textContent = !data.limitEnd ? '제한 없음'
     : (left<=0 ? '시간이 끝나 잠긴 상태' : '남은 시간 약 '+Math.ceil(left/60000)+'분');
   renderHome();
 }
+$('#unlimitedToggle').addEventListener('click', function(){
+  data.unlimited=!data.unlimited; save(); refreshAdmin();
+  toast(data.unlimited?'별 무제한을 켰어요':'별 무제한을 껐어요');
+});
 $('#starMinus').addEventListener('click', function(){ setPool(data.pool-1); refreshAdmin(); });
 $('#starPlus').addEventListener('click', function(){ setPool(data.pool+1); refreshAdmin(); });
 $('#timeApply').addEventListener('click', function(){
@@ -1202,7 +1230,7 @@ function svgShape(shape,color,cls){
 }
 RUN.shape=function(opt){
   const TOTAL=10;
-  const count = opt==='easy'?4:(opt==='normal'?10:20);
+  const count = opt==='easy'?4:(opt==='normal'?9:20);
   const vhard = opt==='vhard';
   const COLORS = vhard?SHAPE_COLORS_V:SHAPE_COLORS;
   quiz({
@@ -1318,15 +1346,13 @@ RUN.ttt=function(opt){
   $('#stage').innerHTML=
     '<div class="turnbar" id="turnbar"></div>'+
     '<div class="ttt-board'+(size===5?' big':'')+'" id="board"></div>'+
-    '<div id="tttEnd"></div>'+
-    '<div class="btn-row"><button class="bigbtn second" id="tttReset">다시 놓기</button></div>';
+    '<div id="tttEnd"></div>';
   const bel=$('#board');
   for(let i=0;i<cells;i++){
     const c=el('button','ttt-cell');
     c.addEventListener('click', (function(i){ return function(){ play(i); }; })(i));
     bel.appendChild(c);
   }
-  $('#tttReset').addEventListener('click', function(){ sfx.tap(); $('#tttEnd').innerHTML=''; reset(); draw(); });
   draw();
 
   function reset(){ for(let i=0;i<cells;i++) board[i]=null; turn='B'; over=false; }
@@ -1339,8 +1365,7 @@ RUN.ttt=function(opt){
     const who = vsCpu ? (turn==='B'?'내 차례':'컴퓨터 차례') : (turn==='B'?'흑돌 차례':'백돌 차례');
     $('#turnbar').innerHTML = over ? '' :
       '<div class="turn-stone" style="background:'+STONE_BG[turn]+'"></div><span class="banner">'+who+'</span>';
-    setHead('<span class="banner">'+(vsCpu?'⚫ 나 vs 컴퓨터 ⚪':'⚫ 흑돌 vs 백돌 ⚪')+'</span>'+
-            '<span class="banner">'+size+'×'+size+' · 3개 나란히</span>');
+    setHead('<span class="banner">'+(vsCpu?'⚫ 나 vs 컴퓨터 ⚪':'⚫ 흑돌 vs 백돌 ⚪')+'</span>');
   }
   function play(i){
     if(over||board[i]) return;
@@ -1420,8 +1445,7 @@ RUN.ttt=function(opt){
     box.innerHTML='<div class="ttt-endcard">'+
         '<span class="face">'+out.emoji+'</span>'+
         '<div class="msg">'+out.title+'</div>'+
-        '<small>판을 천천히 보고 눌러도 좋아</small>'+
-        '<button class="bigbtn primary" id="tttDone">✅ 끝내기</button>'+
+        '<small>판을 천천히 보고 눌러도 좋아</small>'+        '<button class="bigbtn primary" id="tttDone">✅ 끝내기</button>'+
       '</div>';
     $('#tttDone').addEventListener('click', function(){ sfx.tap(); finish(out); });
   }
@@ -1450,12 +1474,12 @@ RUN.rps=function(){
   });
   lights();
   setHead('<span class="banner">🚦 3번 먼저 이기면 승리</span>');
-  newRound();
+  newRound(true);
 
-  function newRound(){
+  function newRound(first){
     $('#handMe').textContent='❔'; $('#handCpu').textContent='❔';
     $('#rpsMsg').textContent='가위바위보!';
-    say('가위바위보','ko-KR',1);
+    if(first) say('가위바위보','ko-KR',1);
     busy=false;
   }
 
