@@ -192,6 +192,11 @@ button{color:var(--ink)}
 @keyframes drop{from{transform:scale(.2)}to{transform:scale(1)}}
 .turnbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
 .turn-stone{width:34px;height:34px;border-radius:50%;border:4px solid var(--ink)}
+.ttt-endcard{background:#fff;border:5px solid var(--ink);border-radius:24px;box-shadow:var(--shadow-sm);
+  padding:14px;margin:16px auto 0;max-width:min(88vw,380px);text-align:center}
+.ttt-endcard .face{font-size:44px;line-height:1;display:block}
+.ttt-endcard .msg{font-family:'Jua',sans-serif;font-size:23px;margin:4px 0 2px}
+.ttt-endcard small{display:block;font-size:13px;opacity:.6;margin-bottom:12px}
 
 /* 가위바위보 */
 .rps-wrap{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
@@ -380,8 +385,8 @@ button{color:var(--ink)}
       <p id="resSub"></p>
       <p id="resStarInfo" class="res-star-info"></p>
       <div class="btn-row">
-        <button class="bigbtn primary" id="btnAgain">한 번 더</button>
-        <button class="bigbtn second" id="btnBackHome">다른 놀이</button>
+        <button class="bigbtn primary" id="btnAgain">☝️ 한 번 더</button>
+        <button class="bigbtn second" id="btnBackHome">🏠 다른 놀이</button>
       </div>
     </div>
   </section>
@@ -586,16 +591,16 @@ const GAMES = [
       {key:'vhard', label:'매우 어려움', note:'20까지 나오는 큰 수'}]},
   {id:'pattern',name:'규칙 찾기',   emoji:'🔁', kind:'earn', star:['normal','hard','vhard'], color:'#FF7A6B',
     options:[
-      {key:'easy',  label:'쉬움',        note:'2개씩 반복 · 카드 8개'},
-      {key:'normal',label:'보통',        note:'3개씩 반복 · 카드 8개'},
-      {key:'hard',  label:'어려움',      note:'4개씩 반복 · 카드 12개'},
-      {key:'vhard', label:'매우 어려움', note:'2·3·4개 섞기 · 카드 16개'}]},
+      {key:'easy',  label:'쉬움',        note:'2개씩 반복'},
+      {key:'normal',label:'보통',        note:'3개씩 반복'},
+      {key:'hard',  label:'어려움',      note:'4개씩 반복'},
+      {key:'vhard', label:'매우 어려움', note:'2·3·4개 섞기 · 10문제'}]},
   {id:'memory', name:'짝 맞추기',   emoji:'🐼', kind:'earn', star:['normal','hard','vhard'], color:'#B79BFF',
     options:[
       {key:'easy',  label:'쉬움',        note:'카드 6장'},
-      {key:'normal',label:'보통',        note:'카드 12장'},
-      {key:'hard',  label:'어려움',      note:'카드 16장'},
-      {key:'vhard', label:'매우 어려움', note:'카드 20장'}]},
+      {key:'normal',label:'보통',        note:'카드 8장'},
+      {key:'hard',  label:'어려움',      note:'카드 12장'},
+      {key:'vhard', label:'매우 어려움', note:'카드 16장'}]},
   /* 별 쓰기 */
   {id:'ttt',    name:'삼목 놀이',   emoji:'⚫', kind:'spend', color:'#FF9F5C',
     options:[
@@ -910,7 +915,7 @@ function quiz(cfg){
             if(ctx.lamp) ctx.lamp.classList.add('red');
             if(cfg.confirmAfterFail){
               state='reveal';
-              if(ctx.text) ctx.text.textContent='정답을 눌러서 들어보자';
+              if(ctx.text) ctx.text.textContent=cfg.revealText||'초록색 정답을 눌러 보자';
               if(cfg.onFail) cfg.onFail(right, ctx);
             }else{
               state='done';
@@ -957,17 +962,19 @@ RUN.hangul=function(){
   const TOTAL=10, pool=shuffle(WORDS).slice(0,TOTAL);
   quiz({
     total:TOTAL, banner:'무슨 그림일까?', hint:'글자를 보고 골라 보자',
-    allowWrong:1, maxWrong:3,
+    allowWrong:1, maxWrong:2, rightDelay:1600,
+    failText:function(q){ return '정답은 이거야'; },
     make:function(i){
       const item=pool[i];
       const others=shuffle(WORDS.filter(function(w){ return w[0]!==item[0]; })).slice(0,3);
       return {
         top:'<div class="word">'+item[0]+'</div>',
         choices:shuffle([item].concat(others)).map(function(w){
-          return {html:w[1], ok:w[0]===item[0]};
+          return {html:w[1], ok:w[0]===item[0], word:w[0]};
         })
       };
     },
+    onCorrect:function(c,ctx){ say(c.word,'ko-KR',0.85); },
     done:function(r){
       finish({emoji:'🅰️', title:'글자를 잘 읽었어!',
         hearts:grade(r.solved,TOTAL,8,6),
@@ -1002,6 +1009,7 @@ RUN.english=function(){
   quiz({
     total:TOTAL, banner:'듣고 그림을 골라 보자', hint:'그림을 골라 보자',
     allowWrong:2, maxWrong:3, confirmAfterFail:true, rightDelay:2200, confirmDelay:1800,
+    revealText:'정답을 눌러서 들어보자',
     retryText:'다시 들어보고 골라 보자',
     make:function(i){
       const item=pool[i];
@@ -1077,8 +1085,8 @@ RUN.math=function(opt){
   }
   quiz({
     total:TOTAL, banner:'답은 몇일까?', hint:'골라 보자',
-    allowWrong:1, maxWrong:2, wrongDelay:1900,
-    failText:function(q){ return '정답은 '+q.ans+'이야'; },
+    allowWrong:1, maxWrong:2, confirmAfterFail:true, confirmDelay:1200,
+    revealText:'초록색 정답을 눌러 보자',
     make:function(){
       const q=makeQ(), list=choicesFor(q);
       const showBeads = (opt==='easy');
@@ -1097,6 +1105,7 @@ RUN.math=function(opt){
     },
     onCorrect:function(c,ctx){ reveal(ctx); },
     onFail:function(c,ctx){ reveal(ctx); },
+    onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent='정답은 '+ctx.q.ans+'이야'; },
     done:function(r){
       finish({emoji:'🧮', title:'계산 척척!',
         hearts:grade(r.solved,TOTAL,8,6),
@@ -1121,26 +1130,30 @@ const PAT_BY_LEN={
   3:[[0,1,1],[0,0,1],[0,1,2]],
   4:[[0,0,1,1],[0,1,2,2],[0,1,0,2],[0,1,2,3]]
 };
-const PAT_CFG={                       // 카드 개수(빈칸 포함) / 가로 칸수 / 문제 수
-  easy: {len:2,  cards:8,  cols:4, total:5},
-  normal:{len:3, cards:8,  cols:4, total:5},
-  hard: {len:4,  cards:12, cols:6, total:5},
-  vhard:{len:0,  cards:16, cols:8, total:10}   // len 0 → 2·3·4 섞기
+const PAT_CFG={                       // 반복 길이 / 문제 수 (칸은 6×2 = 최대 12개)
+  easy: {len:2, total:5},
+  normal:{len:3, total:5},
+  hard: {len:4, total:5},
+  vhard:{len:0, total:10}             // len 0 → 2·3·4 섞기
 };
+const PAT_COLS=6, PAT_MAX=12;
 RUN.pattern=function(opt){
   const cfg=PAT_CFG[opt||'easy'];
   quiz({
     total:cfg.total, banner:'다음에 올 건 뭘까?', hint:'규칙을 찾아봐',
-    allowWrong:1, maxWrong:2, wrongDelay:1800,
-    failText:function(){ return '정답은 이거야'; },
+    allowWrong:1, maxWrong:2, confirmAfterFail:true, confirmDelay:1400,
+    revealText:'초록색 정답을 눌러 보자',
     make:function(){
       const len=cfg.len||pick([2,3,4]);
       const unit=pick(PAT_BY_LEN[len]);
       const pool=shuffle(pick(PAT_POOLS));
       const items=pool.slice(0, Math.max.apply(null,unit)+1);
-      const showLen=cfg.cards-1;
+      // 패턴이 최소 2번은 다 보이도록 카드 수를 정한 뒤, 그 범위에서 랜덤
+      const minCards=len*2+1;
+      const cards=minCards+rnd(PAT_MAX-minCards+1);
+      const showLen=cards-1;
       const seq=[];
-      while(seq.length<cfg.cards+len) for(let u=0;u<unit.length;u++) seq.push(items[unit[u]]);
+      while(seq.length<cards+len) for(let u=0;u<unit.length;u++) seq.push(items[unit[u]]);
       const shown=seq.slice(0,showLen), answer=seq[showLen];
       let cells='';
       for(let i=0;i<shown.length;i++) cells+='<div class="pcell">'+shown[i]+'</div>';
@@ -1151,7 +1164,7 @@ RUN.pattern=function(opt){
       ).slice(0,3);
       return {
         answer:answer,
-        top:'<div class="pattern-row" style="grid-template-columns:repeat('+cfg.cols+',1fr)">'+cells+'</div>',
+        top:'<div class="pattern-row" style="grid-template-columns:repeat('+PAT_COLS+',1fr)">'+cells+'</div>',
         choices:shuffle([answer].concat(others)).map(function(x){
           return {cls:'pic patbtn', html:x, ok:x===answer};
         })
@@ -1159,6 +1172,7 @@ RUN.pattern=function(opt){
     },
     onCorrect:function(c,ctx){ fill(ctx); },
     onFail:function(c,ctx){ fill(ctx); },
+    onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent='이게 규칙이야!'; },
     done:function(r){
       finish({emoji:'🔁', title:'규칙을 찾았어!',
         hearts:grade(r.solved,cfg.total,Math.ceil(cfg.total*0.9),Math.ceil(cfg.total*0.7)),
@@ -1231,7 +1245,7 @@ RUN.shape=function(opt){
 /* ══════════════ 13. 짝 맞추기 ══════════════ */
 const ANIMALS=['🐶','🐱','🐰','🐻','🐼','🦊','🐯','🦁','🐷','🐸','🐵','🐨','🐮','🐧'];
 RUN.memory=function(opt){
-  const n = opt==='easy'?6:(opt==='normal'?12:(opt==='hard'?16:20));
+  const n = opt==='easy'?6:(opt==='normal'?8:(opt==='hard'?12:16));
   const cols = n===6?3:4;
   const pairs=shuffle(ANIMALS).slice(0,n/2);
   const deck=shuffle(pairs.concat(pairs));
@@ -1304,6 +1318,7 @@ RUN.ttt=function(opt){
   $('#stage').innerHTML=
     '<div class="turnbar" id="turnbar"></div>'+
     '<div class="ttt-board'+(size===5?' big':'')+'" id="board"></div>'+
+    '<div id="tttEnd"></div>'+
     '<div class="btn-row"><button class="bigbtn second" id="tttReset">다시 놓기</button></div>';
   const bel=$('#board');
   for(let i=0;i<cells;i++){
@@ -1311,7 +1326,7 @@ RUN.ttt=function(opt){
     c.addEventListener('click', (function(i){ return function(){ play(i); }; })(i));
     bel.appendChild(c);
   }
-  $('#tttReset').addEventListener('click', function(){ sfx.tap(); reset(); draw(); });
+  $('#tttReset').addEventListener('click', function(){ sfx.tap(); $('#tttEnd').innerHTML=''; reset(); draw(); });
   draw();
 
   function reset(){ for(let i=0;i<cells;i++) board[i]=null; turn='B'; over=false; }
@@ -1393,15 +1408,22 @@ RUN.ttt=function(opt){
     over=true;
     if(res!=='draw') res.line.forEach(function(i){ bel.children[i].classList.add('win'); });
     $('#turnbar').innerHTML='';
-    setTimeout(function(){
-      if(res==='draw'){ finish({emoji:'🤝',title:'비겼어!',hearts:2,sub:'다시 한 번 해볼까?'}); return; }
-      if(vsCpu){
-        if(res.p==='B') finish({emoji:'🏆',title:'내가 이겼다!',hearts:3,sub:'흑돌 3개를 나란히 놓았어'});
-        else finish({emoji:'🙂',title:'컴퓨터가 이겼어',hearts:1,sub:'상대 돌이 2개 되면 먼저 막아보자'});
-      }else{
-        finish({emoji:res.p==='B'?'⚫':'⚪', title:(res.p==='B'?'흑돌':'백돌')+' 승리!',hearts:3,sub:'3개를 나란히 놓았어'});
-      }
-    },700);
+    let out;
+    if(res==='draw') out={emoji:'🤝',title:'비겼어!',hearts:2,sub:'다시 한 번 해볼까?'};
+    else if(vsCpu) out = res.p==='B'
+      ? {emoji:'🏆',title:'내가 이겼다!',hearts:3,sub:'흑돌 3개를 나란히 놓았어'}
+      : {emoji:'🙂',title:'컴퓨터가 이겼어',hearts:1,sub:'상대 돌이 2개 되면 먼저 막아보자'};
+    else out={emoji:res.p==='B'?'⚫':'⚪', title:(res.p==='B'?'흑돌':'백돌')+' 승리!',hearts:3,sub:'3개를 나란히 놓았어'};
+
+    if(out.hearts>=2) sfx.win(); else sfx.lose();
+    const box=$('#tttEnd');
+    box.innerHTML='<div class="ttt-endcard">'+
+        '<span class="face">'+out.emoji+'</span>'+
+        '<div class="msg">'+out.title+'</div>'+
+        '<small>판을 천천히 보고 눌러도 좋아</small>'+
+        '<button class="bigbtn primary" id="tttDone">✅ 끝내기</button>'+
+      '</div>';
+    $('#tttDone').addEventListener('click', function(){ sfx.tap(); finish(out); });
   }
 };
 
@@ -1428,6 +1450,14 @@ RUN.rps=function(){
   });
   lights();
   setHead('<span class="banner">🚦 3번 먼저 이기면 승리</span>');
+  newRound();
+
+  function newRound(){
+    $('#handMe').textContent='❔'; $('#handCpu').textContent='❔';
+    $('#rpsMsg').textContent='가위바위보!';
+    say('가위바위보','ko-KR',1);
+    busy=false;
+  }
 
   function lights(){
     let a='<span class="who">나</span>', b='<span class="who">컴</span>';
@@ -1466,10 +1496,8 @@ RUN.rps=function(){
     setTimeout(function(){
       if(me>=3){ finish({emoji:'🏆',title:'3번 이겼다!',hearts:3,sub:'신호등에 초록불이 다 켜졌어'}); return; }
       if(cpu>=3){ finish({emoji:'💪',title:'아쉬워, 다시 해보자',hearts:1,sub:'컴퓨터가 먼저 3번 이겼어'}); return; }
-      $('#handMe').textContent='❔'; $('#handCpu').textContent='❔';
-      $('#rpsMsg').textContent='가위바위보!';
-      busy=false;
-    },900);
+      newRound();
+    },1800);
   }
 };
 
