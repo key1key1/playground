@@ -321,6 +321,15 @@ button{color:var(--ink)}
   border:4px solid var(--ink);border-radius:14px;width:100%}
 .admin-state{font-family:'Jua',sans-serif;font-size:16px;background:#FFF0CC;border:3px solid var(--ink);
   border-radius:12px;padding:8px 10px;margin-top:10px;text-align:center}
+.stat-row{display:flex;align-items:center;gap:10px;border:3px solid var(--ink);border-radius:14px;
+  padding:9px 12px;margin-bottom:8px;background:#fff;text-align:left}
+.stat-row .ico{font-size:24px}
+.stat-row .nm{flex:1;font-family:'Jua',sans-serif;font-size:17px}
+.stat-row .cnt{font-family:'Jua',sans-serif;font-size:18px;background:#FFE9A8;border:3px solid var(--ink);
+  border-radius:999px;padding:2px 12px}
+.stat-head{font-family:'Jua',sans-serif;font-size:15px;text-align:left;margin:6px 2px 8px;opacity:.7}
+.stat-total{font-family:'Jua',sans-serif;font-size:17px;background:#E7F1FB;border:3px solid var(--ink);
+  border-radius:14px;padding:10px;margin-top:6px}
 
 /* 알림 토스트 */
 #toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:70;
@@ -437,7 +446,7 @@ button{color:var(--ink)}
     <h2 style="margin:0 0 12px">부모 관리</h2>
 
     <div class="admin-sec">
-      <h3>⭐ 별 쓰기용 별 (최대 10)</h3>
+      <h3>⭐ 별 개수 (최대 10)</h3>
       <div class="star-ctrl">
         <button class="rbtn" id="starMinus">−</button>
         <span class="val" id="starVal">0</span>
@@ -463,8 +472,30 @@ button{color:var(--ink)}
       </div>
     </div>
 
+    <div class="admin-sec">
+      <h3>📊 놀이 기록</h3>
+      <div class="btn-row" style="margin-top:0">
+        <button class="bigbtn second" id="openStats">기록 보기</button>
+        <button class="bigbtn warn" id="resetPlays">별 개수 초기화</button>
+      </div>
+      <p style="font-size:13px;opacity:.6;margin:10px 0 0;text-align:center">
+        초기화하면 홈 화면 놀이별 ⭐가 모두 0이 됩니다</p>
+    </div>
+
     <div class="btn-row">
       <button class="bigbtn second" id="adminExit">나가기 (홈 화면)</button>
+    </div>
+  </div>
+</div>
+
+<!-- 놀이 기록 -->
+<div id="statsPanel" class="overlay" role="dialog" aria-modal="true" aria-label="놀이 기록">
+  <div class="over-card">
+    <h2 style="margin:0 0 4px">📊 놀이 기록</h2>
+    <p style="margin:0 0 14px;font-size:14px;opacity:.65">지금까지 끝낸 판 수입니다</p>
+    <div id="statsBody"></div>
+    <div class="btn-row">
+      <button class="bigbtn second" id="statsBack">← 관리로 돌아가기</button>
     </div>
   </div>
 </div>
@@ -888,6 +919,47 @@ $('#limitClear').addEventListener('click', function(){ clearLimit(); refreshAdmi
 $('#adminExit').addEventListener('click', function(){
   $('#adminPanel').classList.remove('show');
   playing=false; go('home');
+});
+
+/* 놀이 기록 */
+function renderStats(){
+  const kinds=[{k:'earn',t:'⭐ 별 모으기'},{k:'spend',t:'🎟️ 별 쓰기'}];
+  let html='', total=0;
+  kinds.forEach(function(sec){
+    html+='<div class="stat-head">'+sec.t+'</div>';
+    GAMES.filter(function(g){ return g.kind===sec.k; }).forEach(function(g){
+      const n=data.plays[g.id]||0; total+=n;
+      html+='<div class="stat-row"><span class="ico">'+g.emoji+'</span>'+
+            '<span class="nm">'+g.name+'</span><span class="cnt">'+n+'판</span></div>';
+    });
+  });
+  html+='<div class="stat-total">전체 '+total+'판</div>';
+  $('#statsBody').innerHTML=html;
+}
+$('#openStats').addEventListener('click', function(){
+  renderStats();
+  $('#adminPanel').classList.remove('show');
+  $('#statsPanel').classList.add('show');
+});
+$('#statsBack').addEventListener('click', function(){
+  $('#statsPanel').classList.remove('show');
+  $('#adminPanel').classList.add('show');
+  refreshAdmin();
+});
+let resetArm=false;
+$('#resetPlays').addEventListener('click', function(){
+  const b=this;
+  if(!resetArm){
+    resetArm=true; b.textContent='정말 지울까요? 다시 누르기';
+    clearTimeout($('#resetPlays').t);
+    $('#resetPlays').t=setTimeout(function(){
+      resetArm=false; b.textContent='별 개수 초기화';
+    },4000);
+    return;
+  }
+  resetArm=false; b.textContent='별 개수 초기화';
+  data.plays={}; save(); refreshAdmin();
+  toast('놀이별 ⭐를 모두 지웠어요');
 });
 
 /* ══════════════ 7. 문제 놀이 공통 엔진 ══════════════ */
