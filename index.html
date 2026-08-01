@@ -228,6 +228,39 @@ button{color:var(--ink)}
 .thinking{animation:wob .35s infinite alternate}
 @keyframes wob{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
 
+/* 간식 접시 꾸미기 */
+.snack-wrap{display:flex;justify-content:center;margin-bottom:14px}
+.snack-rim{position:relative;width:min(84vw,340px);aspect-ratio:1;border-radius:50%;
+  border:5px solid var(--ink);box-shadow:var(--shadow);
+  background:radial-gradient(circle at 50% 50%,#fff 0%,#fff 58%,#EAF2FA 78%,#D9E6F2 100%)}
+.snack-target{position:absolute;inset:5%;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle,rgba(43,33,64,.05) 60%,rgba(43,33,64,.09) 100%)}
+.snack-piece{position:absolute;line-height:1;--rot:0deg;cursor:pointer;
+  font-size:clamp(42px,12.5vw,60px);
+  filter:drop-shadow(0 3px 0 rgba(43,33,64,.3));
+  transform:translate(-50%,-50%) rotate(var(--rot));
+  animation:snackPop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes snackPop{
+  0%{transform:translate(-50%,-50%) rotate(var(--rot)) scale(.3)}
+  60%{transform:translate(-50%,-50%) rotate(var(--rot)) scale(1.18)}
+  100%{transform:translate(-50%,-50%) rotate(var(--rot)) scale(1)}
+}
+.snack-hint{text-align:center;font-family:'Jua',sans-serif;font-size:17px;margin:0 0 12px;opacity:.75}
+.snack-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.snack-tab{display:flex;flex-direction:column;align-items:center;gap:1px;
+  font-family:'Jua',sans-serif;background:#fff;border:4px solid var(--ink);border-radius:999px;
+  padding:7px 16px 6px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
+.snack-tab .ico{font-size:21px;line-height:1}
+.snack-tab .lbl{font-size:12px;line-height:1}
+.snack-tab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.snack-tab.sel{background:var(--sun);transform:translateY(-2px);box-shadow:0 6px 0 var(--ink)}
+.snack-palette{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:8px}
+.snack-item-btn{font-size:clamp(21px,5.8vw,27px);background:#fff;border:4px solid var(--ink);
+  border-radius:16px;width:52px;height:52px;display:grid;place-items:center;cursor:pointer;
+  box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
+.snack-item-btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.snack-item-btn.sel{background:var(--sun);transform:translateY(-3px);box-shadow:0 8px 0 var(--ink)}
+
 /* 낱말 */
 .word{font-family:'Jua',sans-serif;font-size:clamp(46px,15vw,84px);line-height:1.1;letter-spacing:2px}
 .en-hint{font-size:15px;opacity:.65;margin-top:2px}
@@ -654,7 +687,8 @@ const GAMES = [
       {key:'normal',label:'보통',        note:'9개 중에서 찾기'},
       {key:'hard',  label:'어려움',      note:'20개 중에서 찾기'},
       {key:'vhard', label:'매우 어려움', note:'20개 · 비슷한 것끼리'}]},
-  {id:'rps',    name:'가위바위보', emoji:'✌️', kind:'spend', color:'#F58FBE'}
+  {id:'rps',    name:'가위바위보', emoji:'✌️', kind:'spend', color:'#F58FBE'},
+  {id:'snack',  name:'간식 접시 꾸미기', emoji:'🍽️', kind:'spend', color:'#FFD6A5'}
 ];
 function gameById(id){
   for(let i=0;i<GAMES.length;i++) if(GAMES[i].id===id) return GAMES[i];
@@ -1597,7 +1631,114 @@ RUN.rps=function(){
   }
 };
 
-/* ══════════════ 16. 시작 ══════════════ */
+/* ══════════════ 16. 간식 접시 꾸미기 ══════════════ */
+const SNACK_CATS=[
+  {key:'fruit', label:'과일', tab:'🍓', items:['🍓','🍒','🍇','🍉','🍊','🍋','🍑','🍍','🥝','🍌','🍎']},
+  {key:'bread', label:'빵',   tab:'🥐', items:['🍞','🥐','🥯','🧁','🍩','🍪','🥨']},
+  {key:'meat',  label:'고기', tab:'🍗', items:['🍗','🍖','🥓','🧀','🍤','🥚']},
+  {key:'deco',  label:'장식', tab:'⭐', items:['⭐','🌟','💗','🎀','🕯️','🌈','🍬','🍭']}
+];
+const SNACK_MAX=20;
+RUN.snack=function(){
+  let catIdx=0, selected=null, count=0, warned=false;
+
+  $('#stage').innerHTML=
+    '<div class="snack-wrap"><div class="snack-rim">'+
+      '<div class="snack-target" id="snackTarget"></div>'+
+    '</div></div>'+
+    '<p class="snack-hint" id="snackHint">간식을 먼저 골라 보자!</p>'+
+    '<div class="snack-tabs" id="snackTabs"></div>'+
+    '<div class="snack-palette" id="snackPalette"></div>'+
+    '<div class="btn-row" id="snackDoneRow" style="display:none">'+
+      '<button class="bigbtn second" id="snackUndo">↩️ 취소</button>'+
+      '<button class="bigbtn primary" id="snackDone">🍽️ 완성!</button>'+
+    '</div>'+
+    '<div id="snackEnd"></div>';
+  setHead('<span class="banner">🍽️ 접시를 예쁘게 채워 보자</span>');
+
+  const tabsEl=$('#snackTabs'), paletteEl=$('#snackPalette'), hint=$('#snackHint');
+  SNACK_CATS.forEach(function(c,i){
+    const b=el('button','snack-tab'+(i===0?' sel':''),
+      '<span class="ico">'+c.tab+'</span><span class="lbl">'+c.label+'</span>');
+    b.addEventListener('click', function(){
+      if(i===catIdx) return;
+      sfx.tap();
+      catIdx=i; selected=null;
+      hint.textContent='간식을 먼저 골라 보자!';
+      drawTabs(); drawPalette();
+    });
+    tabsEl.appendChild(b);
+  });
+  function drawTabs(){
+    const all=tabsEl.querySelectorAll('.snack-tab');
+    for(let i=0;i<all.length;i++) all[i].classList.toggle('sel', i===catIdx);
+  }
+  function drawPalette(){
+    paletteEl.innerHTML='';
+    SNACK_CATS[catIdx].items.forEach(function(t){
+      const b=el('button','snack-item-btn',t);
+      b.addEventListener('click', function(){
+        sfx.tap();
+        const already=b.classList.contains('sel');
+        const all=paletteEl.querySelectorAll('.snack-item-btn');
+        for(let i=0;i<all.length;i++) all[i].classList.remove('sel');
+        if(already){ selected=null; hint.textContent='간식을 먼저 골라 보자!'; }
+        else{ b.classList.add('sel'); selected=t; hint.textContent='접시를 눌러서 올려 보자!'; }
+      });
+      paletteEl.appendChild(b);
+    });
+  }
+  drawPalette();
+
+  const target=$('#snackTarget');
+  target.addEventListener('click', function(e){
+    if(!selected){ sfx.tap(); return; }
+    if(count>=SNACK_MAX){
+      if(!warned){ warned=true; sfx.bad(); say('앗 접시가 꽉 찼어!'); toast('접시가 가득 찼어요 🍽️'); }
+      return;
+    }
+    const rect=target.getBoundingClientRect();
+    const x=e.clientX-rect.left, y=e.clientY-rect.top;
+    addItem(selected, x/rect.width*100, y/rect.height*100);
+  });
+
+  function addItem(emoji,xPct,yPct){
+    const piece=el('span','snack-piece',emoji);
+    piece.style.left=xPct+'%'; piece.style.top=yPct+'%';
+    piece.style.setProperty('--rot', (rnd(91)-45)+'deg');
+    target.appendChild(piece);
+    count++; sfx.good(); updateDone();
+  }
+  function updateDone(){ $('#snackDoneRow').style.display = count>0?'flex':'none'; }
+
+  $('#snackUndo').addEventListener('click', function(){
+    if(!target.lastElementChild) return;
+    target.lastElementChild.remove();
+    count--; warned=false; sfx.tap();
+    updateDone();
+  });
+
+  $('#snackDone').addEventListener('click', function(){
+    sfx.tap(); sfx.win();
+    $('#snackTabs').style.display='none';
+    $('#snackPalette').style.display='none';
+    $('#snackDoneRow').style.display='none';
+    hint.style.display='none';
+    $('#snackEnd').innerHTML=
+      '<div class="ttt-endcard">'+
+        '<span class="face">🎉</span>'+
+        '<div class="msg">다 꾸몄어!</div>'+
+        '<small>접시를 천천히 구경해도 좋아</small>'+
+        '<button class="bigbtn primary" id="snackFinish">✅ 끝내기</button>'+
+      '</div>';
+    $('#snackFinish').addEventListener('click', function(){
+      sfx.tap();
+      finish({emoji:'🍽️', title:'접시가 완성됐어!', hearts:3, sub:'세상에 하나뿐인 나만의 간식 접시야'});
+    });
+  });
+};
+
+/* ══════════════ 17. 시작 ══════════════ */
 load();
 renderHome();
 render((location.hash||'#home').replace(/^#/,'') || 'home');
