@@ -70,7 +70,7 @@ button{color:var(--ink)}
   font-size:clamp(11px,3.2vw,17px)}
 .slot.on{background:#FFC93C}
 @keyframes starPopOut{0%{transform:scale(1);opacity:1}100%{transform:scale(.2) translateY(-14px);opacity:0}}
-.slot.pop-out{animation:starPopOut .45s ease-in forwards}
+.slot.pop-out{animation:starPopOut .6s ease-in forwards}
 
 .cat{display:flex;align-items:center;gap:8px;margin:0 4px 12px;flex-wrap:wrap}
 .cat-ico{font-size:26px}
@@ -136,8 +136,8 @@ button{color:var(--ink)}
 .banner{font-family:'Jua',sans-serif;font-size:19px;background:#fff;border:4px solid var(--ink);
   border-radius:999px;padding:10px 18px;box-shadow:var(--shadow-sm)}
 #stage{min-height:40vh}
-.prompt-box{background:#fff;border:5px solid var(--ink);border-radius:var(--r);box-shadow:var(--shadow);
-  padding:18px 12px;text-align:center;margin-bottom:18px}
+.prompt-box{position:relative;background:#fff;border:5px solid var(--ink);border-radius:var(--r);box-shadow:var(--shadow);
+  padding:30px 12px 26px;text-align:center;margin-bottom:18px}
 .judge{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;min-height:44px}
 .lampbig{width:30px;height:30px;border-radius:50%;border:4px solid var(--ink);background:#EDEDF3}
 .lampbig.green{background:#2FBF71;box-shadow:0 0 16px #2FBF71}
@@ -205,6 +205,9 @@ button{color:var(--ink)}
 .ttt-endcard .face{font-size:44px;line-height:1;display:block}
 .ttt-endcard .msg{font-family:'Jua',sans-serif;font-size:23px;margin:4px 0 2px}
 .ttt-endcard small{display:block;font-size:13px;opacity:.6;margin-bottom:12px}
+.ttt-endcard .row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px}
+.ttt-endcard .row .face{font-size:32px}
+.ttt-endcard .row .msg{font-size:20px;margin:0}
 .ttt-score{display:flex;justify-content:center;gap:18px;margin-bottom:10px}
 .ttt-score .grp{display:flex;align-items:center;gap:7px}
 .ttt-score .lbl{font-family:'Jua',sans-serif;font-size:15px}
@@ -268,13 +271,12 @@ button{color:var(--ink)}
 .snack-tab .lbl{font-size:12px;line-height:1}
 .snack-tab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .snack-tab.sel{background:var(--sun);transform:translateY(-2px);box-shadow:0 6px 0 var(--ink)}
-.snack-putdown-row{display:flex;justify-content:center;margin-bottom:10px}
-.snack-putdown{display:flex;flex-direction:column;align-items:center;gap:1px;
-  font-family:'Jua',sans-serif;background:#F4F1FF;border:4px solid var(--ink);border-radius:999px;
-  padding:7px 18px 6px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
-.snack-putdown .ico{font-size:21px;line-height:1}
-.snack-putdown .lbl{font-size:12px;line-height:1}
-.snack-putdown:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.snack-toggle-del{position:absolute;bottom:-6px;right:-6px;width:50px;height:50px;border-radius:50%;
+  background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);
+  display:grid;place-items:center;font-size:22px;cursor:pointer;z-index:2;
+  transition:transform .08s, box-shadow .08s, background .15s}
+.snack-toggle-del:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.snack-toggle-del.on{background:#FF7A6B;box-shadow:0 4px 0 var(--ink),0 0 0 4px #FFD3CC inset}
 .photo-flash{position:fixed;inset:0;background:#fff;z-index:65;pointer-events:none;
   animation:flashFade .5s ease-out forwards}
 @keyframes flashFade{0%{opacity:.85}100%{opacity:0}}
@@ -287,7 +289,6 @@ button{color:var(--ink)}
 
 /* 낱말 */
 .word{font-family:'Jua',sans-serif;font-size:clamp(46px,15vw,84px);line-height:1.1;letter-spacing:2px}
-.en-hint{font-size:15px;opacity:.65;margin-top:2px}
 .learn-card{background:#FFF6DA;border:5px solid var(--ink);border-radius:22px;
   box-shadow:var(--shadow-sm);padding:14px;margin-top:14px;text-align:center;
   font-family:'Jua',sans-serif;font-size:22px}
@@ -306,6 +307,19 @@ button{color:var(--ink)}
 .numbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
 .mini-beads{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:6px}
 .mini-bead{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:var(--sky)}
+.math-hint-badge{position:absolute;top:5px;right:10px;width:24px;height:24px;border-radius:50%;
+  background:#fff;border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);
+  display:grid;place-items:center;font-size:11px;cursor:pointer;transition:transform .08s, box-shadow .08s}
+.math-hint-badge:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.hint-beads{display:flex;flex-direction:column;align-items:flex-start;gap:7px;margin:10px 0}
+.hint-row{display:flex;align-items:center;gap:5px}
+.hbead{width:20px;height:20px;border-radius:50%;flex:0 0 auto}
+.hbead-gap{width:9px;flex:0 0 auto}
+.hbead.a{background:var(--sky);border:3px solid var(--ink)}
+.hbead.b{background:var(--coral);border:3px solid var(--ink)}
+.hbead.remain{background:var(--sky);border:4px solid var(--ink)}
+.hbead.sub{background:#DCE6F2;border:2px solid #A9BBCB}
+.hint-eq{font-family:'Jua',sans-serif;font-size:20px;text-align:center;margin:6px 0 0}
 
 /* 규칙 찾기 */
 .pattern-row{display:grid;gap:6px;justify-items:start}
@@ -320,16 +334,16 @@ button{color:var(--ink)}
 .shop-item{font-family:'Jua',sans-serif;font-size:22px}
 .shop-item .ico{font-size:40px;display:block;margin-bottom:4px}
 .shop-price{font-family:'Jua',sans-serif;font-size:clamp(30px,9vw,42px);color:var(--coral);margin-top:6px}
-.shop-compare{text-align:center;font-family:'Jua',sans-serif;font-size:17px;line-height:1.5;
-  background:#F4F1FF;border:4px solid var(--ink);border-radius:18px;padding:10px 12px;margin:14px 0}
-.shop-compare b{font-size:19px}
-.shop-compare.under{background:#FFF0CC}
-.shop-compare.over{background:#FFD3CC}
-.shop-compare.match{background:#CFF3E3}
 .shop-paid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:38px}
-.shop-zone{border:4px solid var(--ink);border-radius:18px;padding:10px 10px 12px;margin-bottom:12px}
+.shop-zone{border:4px solid var(--ink);border-radius:18px;padding:9px 10px 10px;margin-bottom:10px}
 .zone-label{font-family:'Jua',sans-serif;font-size:14px;margin-bottom:8px;opacity:.75}
+.zone-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.zone-label-row .zone-label{margin-bottom:0}
+.paid-sum{font-family:'Jua',sans-serif;font-size:14px;background:#fff;border:3px solid var(--ink);
+  border-radius:999px;padding:3px 10px;white-space:nowrap}
 .paid-zone{background:#F2FBF6}
+.paid-zone.match{background:#CFF3E3}
+.paid-zone.over{background:#FFD3CC}
 .wallet-zone{background:#FFF9EC}
 .paid-chip{font-family:'Jua',sans-serif;font-size:14px;border:3px solid var(--ink);border-radius:999px;
   padding:6px 12px;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:#fff}
@@ -337,15 +351,13 @@ button{color:var(--ink)}
 .paid-chip.m1000{background:#4C8DFF}
 .paid-chip.m500{background:#8B7FD1}
 .paid-chip.m100{background:#D4A24C}
-.shop-money-palette{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:16px}
+.shop-money-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
 .money-btn{font-family:'Jua',sans-serif;border:4px solid var(--ink);cursor:pointer;color:#fff;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;white-space:nowrap;
   box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
 .money-btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
-.money-btn .mv{font-size:17px;line-height:1.1}
-.money-btn .mw{font-size:11px;opacity:.85}
-.money-btn.bill{width:96px;height:58px;border-radius:10px}
-.money-btn.coin{width:64px;height:64px;border-radius:50%}
+.money-btn.bill{width:100%;height:50px;border-radius:14px;font-size:clamp(12px,3.6vw,15px)}
+.money-btn.coin{width:50px;height:50px;border-radius:50%;margin:0 auto;font-size:11px;letter-spacing:-.3px}
 .money-btn.m5000{background:linear-gradient(135deg,#F07575,#D9453F)}
 .money-btn.m1000{background:linear-gradient(135deg,#6FA4FF,#3B6FE0)}
 .money-btn.m500{background:linear-gradient(135deg,#A79AE0,#7A6BC7)}
@@ -379,14 +391,12 @@ button{color:var(--ink)}
 
 /* 나가기 확인 */
 .ask-pics{font-size:clamp(38px,12vw,54px);line-height:1.2;letter-spacing:6px}
-.ask-title{font-family:'Jua',sans-serif;font-size:26px;margin:8px 0 2px}
-.ask-sub{font-size:15px;opacity:.65;margin:0 0 18px}
+.ask-title{font-family:'Jua',sans-serif;font-size:26px;margin:8px 0 16px}
 .ask-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .askbtn{border:5px solid var(--ink);border-radius:24px;padding:14px 8px;cursor:pointer;
   box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
 .askbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
 .askbtn .mark{font-size:clamp(40px,12vw,54px);line-height:1;display:block}
-.askbtn .ico{font-size:28px;display:block;margin-top:2px}
 .askbtn .cap{font-family:'Jua',sans-serif;font-size:17px;display:block;margin-top:4px}
 .askbtn.stay{background:#CFF3E3}
 .askbtn.leave{background:#FFD3CC}
@@ -536,13 +546,12 @@ button{color:var(--ink)}
   <div class="over-card">
     <div class="ask-pics">🎮 ➡️ 🏠</div>
     <div class="ask-title">정말 나갈까?</div>
-    <p class="ask-sub">지금 놀이는 처음부터 다시 시작해요</p>
     <div class="ask-row">
       <button class="askbtn stay" id="askNo">
-        <span class="mark">❌</span><span class="ico">🎮</span><span class="cap">더 할래</span>
+        <span class="mark">❌</span><span class="cap">계속 할래</span>
       </button>
       <button class="askbtn leave" id="askYes">
-        <span class="mark">⭕</span><span class="ico">🏠</span><span class="cap">나갈래</span>
+        <span class="mark">⭕</span><span class="cap">나갈래</span>
       </button>
     </div>
   </div>
@@ -644,6 +653,17 @@ button{color:var(--ink)}
 
     <div class="btn-row">
       <button class="bigbtn second" id="gsBack">← 관리로 돌아가기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 숫자 계산 힌트 -->
+<div id="mathHint" class="overlay" role="dialog" aria-modal="true" aria-label="힌트 보기">
+  <div class="over-card">
+    <h2 style="margin:0 0 6px">💡 힌트</h2>
+    <div id="mathHintBody"></div>
+    <div class="btn-row">
+      <button class="bigbtn second" id="mathHintClose">닫기</button>
     </div>
   </div>
 </div>
@@ -918,6 +938,7 @@ function stopAll(){
   gameTimers.forEach(function(id){ clearTimeout(id); });
   gameTimers=[];
   try{ if('speechSynthesis' in window) speechSynthesis.cancel(); }catch(e){}
+  const mh=$('#mathHint'); if(mh) mh.classList.remove('show');
 }
 function go(route){
   const h='#'+route;
@@ -992,8 +1013,8 @@ $('#payBtn').addEventListener('click', function(){
   if(last) last.classList.add('pop-out');
   setPool(data.pool-1);
   $('#payBankNum').textContent = data.pool+' / '+MAX_POOL;
-  toast('⭐ 별 하나 냈어요 · 남은 별 '+data.pool+'개', 2000);
-  gTimeout(function(){ startGame(g,opt); }, 480);
+  toast('⭐ 별 하나 냈어요 · 남은 별 '+data.pool+'개', 2400);
+  gTimeout(function(){ startGame(g,opt); }, 1350);
 });
 function startGame(g,opt){
   if(timeUp()){ sfx.bad(); say('시간이 다 됐어'); backHome(); return; }
@@ -1366,8 +1387,8 @@ RUN.hangul=function(){
   const TOTAL=qCount('hangul'), pool=shuffle(WORDS).slice(0,TOTAL);
   quiz({
     total:TOTAL, banner:'무슨 그림일까?', hint:'글자를 보고 골라 보자',
-    allowWrong:1, maxWrong:2, rightDelay:1600,
-    failText:function(q){ return '정답은 이거야'; },
+    allowWrong:1, maxWrong:2, confirmAfterFail:true, rightDelay:1600, confirmDelay:1800,
+    revealText:'초록색 정답을 눌러 보자',
     make:function(i){
       const item=pool[i];
       const others=shuffle(WORDS.filter(function(w){ return w[0]!==item[0]; })).slice(0,3);
@@ -1379,6 +1400,7 @@ RUN.hangul=function(){
       };
     },
     onCorrect:function(c,ctx){ say(c.word,'ko-KR',0.85); },
+    onConfirm:function(c,ctx){ sfx.good(); say(c.word,'ko-KR',0.85); if(ctx.text) ctx.text.textContent=c.word+'!'; },
     done:function(r){
       finish({emoji:'🅰️', title:'글자를 잘 읽었어!',
         hearts:gradeStd(r.solved,TOTAL),
@@ -1407,12 +1429,13 @@ const EN_WORDS=[
 RUN.english=function(){
   const TOTAL=qCount('english'), pool=shuffle(EN_WORDS).slice(0,TOTAL);
   const en=function(w){ say(w,'en-US',0.75); };
-  const card=function(it,ctx){
-    ctx.extra.innerHTML='<div class="learn-card"><span class="big">'+it[1]+'</span>'+it[0]+' — '+it[2]+'</div>';
+  const card=function(it){
+    const c=document.getElementById('enCard');
+    if(c) c.innerHTML='<div class="learn-card"><span class="big">'+it[1]+'</span>'+it[0]+' — '+it[2]+'</div>';
   };
   quiz({
     total:TOTAL, banner:'듣고 그림을 골라 보자', hint:'그림을 골라 보자',
-    allowWrong:2, maxWrong:3, confirmAfterFail:true, rightDelay:2200, confirmDelay:1800,
+    allowWrong:1, maxWrong:2, confirmAfterFail:true, rightDelay:2800, confirmDelay:2200,
     revealText:'정답을 눌러서 들어보자',
     retryText:'다시 들어보고 골라 보자',
     make:function(i){
@@ -1421,8 +1444,8 @@ RUN.english=function(){
       return {
         item:item,
         top:'<div class="word" id="enWord">'+item[0]+'</div>'+
-            '<div class="en-hint">글자나 그림을 누르면 소리가 나요</div>'+
-            '<button class="chip" id="btnSpeak" style="margin-top:8px">🔊 들어보기</button>',
+            '<button class="chip" id="btnSpeak" style="margin-top:8px">🔊 들어보기</button>'+
+            '<div id="enCard"></div>',
         choices:shuffle([item].concat(others)).map(function(w){
           return {html:w[1], ok:w[0]===item[0], data:w};
         })
@@ -1434,13 +1457,13 @@ RUN.english=function(){
       $('#enWord').addEventListener('click', function(){ en(ctx.q.item[0]); });
     },
     onPick:function(c,ctx,state){ if(state!=='reveal'||c.ok) en(c.data[0]); },
-    onCorrect:function(c,ctx){ card(ctx.q.item,ctx); },
-    onFail:function(c,ctx){ card(ctx.q.item,ctx); },
+    onCorrect:function(c,ctx){ card(ctx.q.item); },
+    onFail:function(c,ctx){ card(ctx.q.item); },
     onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent=ctx.q.item[0]+' — '+ctx.q.item[2]; },
     done:function(r){
       finish({emoji:'🔤', title:'영어 단어를 배웠어!',
         hearts:gradeStd(r.solved,TOTAL),
-        sub:'세 번 안에 맞춘 단어 '+r.solved+' / '+TOTAL});
+        sub:'두 번 안에 맞춘 단어 '+r.solved+' / '+TOTAL});
     }
   });
 };
@@ -1449,6 +1472,34 @@ RUN.english=function(){
 function beadsHTML(a,b){
   return '<div class="beads">'+rep('<div class="bead a"></div>',a)+rep('<div class="bead b"></div>',b)+'</div>';
 }
+function hintBeadsHTML(seq){
+  const rows=[];
+  for(let i=0;i<seq.length;i+=10) rows.push(seq.slice(i,i+10));
+  const rowsHTML=rows.map(function(row){
+    let inner='';
+    row.forEach(function(cls,idx){
+      if(idx===5) inner+='<span class="hbead-gap"></span>';
+      inner+='<span class="hbead '+cls+'"></span>';
+    });
+    return '<div class="hint-row">'+inner+'</div>';
+  }).join('');
+  return '<div class="hint-beads">'+rowsHTML+'</div>';
+}
+function renderMathHint(q){
+  const body=$('#mathHintBody');
+  if(!body) return;
+  const seq=[];
+  if(q.op==='+'){
+    for(let i=0;i<q.a;i++) seq.push('a');
+    for(let i=0;i<q.b;i++) seq.push('b');
+    body.innerHTML=hintBeadsHTML(seq)+'<p class="hint-eq">'+q.a+' + '+q.b+' = ?</p>';
+  }else{
+    for(let i=0;i<q.ans;i++) seq.push('remain');
+    for(let i=0;i<q.b;i++) seq.push('sub');
+    body.innerHTML=hintBeadsHTML(seq)+'<p class="hint-eq">'+q.a+' − '+q.b+' = ?</p>';
+  }
+}
+$('#mathHintClose').addEventListener('click', function(){ $('#mathHint').classList.remove('show'); });
 RUN.math=function(opt){
   const TOTAL=qCount('math');
   const sign=function(op){ return op==='+'?'＋':'－'; };
@@ -1492,11 +1543,13 @@ RUN.math=function(opt){
     allowWrong:1, maxWrong:2, confirmAfterFail:true, confirmDelay:1200,
     revealText:'초록색 정답을 눌러 보자',
     make:function(){
+      $('#mathHint').classList.remove('show');
       const q=makeQ(), list=choicesFor(q);
       const showBeads = (opt==='easy');
       return {
         q:q, ans:q.ans,
-        top:'<div class="eq" id="eqline">'+q.a+' '+sign(q.op)+' '+q.b+' ＝ ?</div>'+
+        top:'<button class="math-hint-badge" id="mathHintBtn" aria-label="힌트 보기">💡</button>'+
+            '<div class="eq" id="eqline">'+q.a+' '+sign(q.op)+' '+q.b+' ＝ ?</div>'+
             (showBeads?beadsHTML(q.a,q.b):''),
         gridClass:'num-grid'+(opt==='easy'?' four':''),
         choices:list.map(function(v){
@@ -1506,6 +1559,11 @@ RUN.math=function(opt){
           };
         })
       };
+    },
+    ready:function(ctx){
+      $('#mathHintBtn').addEventListener('click', function(){
+        sfx.tap(); renderMathHint(ctx.q.q); $('#mathHint').classList.add('show');
+      });
     },
     onCorrect:function(c,ctx){ reveal(ctx); },
     onFail:function(c,ctx){ reveal(ctx); },
@@ -1727,13 +1785,12 @@ RUN.shop=function(){
     setHead(pips(round-1,TOTAL)+'<span class="banner">돈을 딱 맞춰 내보자</span>');
     $('#stage').innerHTML=
       '<div class="prompt-box">'+
-        '<div class="shop-item"><span class="ico">'+item.e+'</span>'+item.n+' 사기</div>'+
+        '<div class="shop-item"><span class="ico">'+item.e+'</span>'+item.n+'</div>'+
         '<div class="shop-price">'+won(price)+'</div>'+
         '<button class="chip" id="shopHearBtn" style="margin-top:8px">🔊 다시 듣기</button>'+
       '</div>'+
-      '<div class="shop-compare" id="shopCompare"></div>'+
-      '<div class="shop-zone paid-zone">'+
-        '<div class="zone-label">💰 낸 돈</div>'+
+      '<div class="shop-zone paid-zone" id="paidZone">'+
+        '<div class="zone-label-row"><span class="zone-label">💰 낸 돈</span><span class="paid-sum" id="paidSum"></span></div>'+
         '<div class="shop-paid" id="shopPaid"></div>'+
       '</div>'+
       '<div class="shop-zone wallet-zone">'+
@@ -1752,7 +1809,7 @@ RUN.shop=function(){
 
     const moneyEl=$('#shopMoney');
     SHOP_MONEY.forEach(function(m){
-      const b=el('button','money-btn '+m.cls,'<span class="mv">'+m.v.toLocaleString('ko-KR')+'</span><span class="mw">원</span>');
+      const b=el('button','money-btn '+m.cls, m.v.toLocaleString('ko-KR')+'원');
       b.addEventListener('click', function(){
         if(over) return;
         chosen.push(m.v); paid+=m.v; sfx.tap();
@@ -1787,10 +1844,10 @@ RUN.shop=function(){
   }
 
   function updateCompare(){
-    const c=$('#shopCompare');
+    const zone=$('#paidZone'), sum=$('#paidSum');
     const hint = paid===price ? '✅ 딱 맞아!' : (paid>price ? '🔺 너무 많아' : '더 필요해');
-    c.innerHTML='낸 돈 '+won(paid)+' / 가격 '+won(price)+'<br><b>'+hint+'</b>';
-    c.className='shop-compare '+(paid===price?'match':(paid>price?'over':'under'));
+    sum.textContent = won(paid)+' · '+hint;
+    zone.className='shop-zone paid-zone'+(paid===price?' match':(paid>price?' over':''));
   }
 
   function exampleCombo(p){
@@ -2035,9 +2092,8 @@ RUN.ttt=function(opt){
 
       const box=$('#tttEnd');
       box.innerHTML='<div class="ttt-endcard">'+
-          '<span class="face">'+card.emoji+'</span>'+
-          '<div class="msg">'+card.title+'</div>'+
-          '<small>'+(matchOver?'매치가 끝났어! 결과를 확인해 보자':'판을 천천히 보고 눌러도 좋아')+'</small>'+
+          '<div class="row"><span class="face">'+card.emoji+'</span><span class="msg">'+card.title+'</span></div>'+
+          (matchOver?'<small>매치가 끝났어! 결과를 확인해 보자</small>':'')+
           '<button class="bigbtn primary" id="tttDone">'+(matchOver?'✅ 끝내기':'▶️ 다음 판')+'</button>'+
         '</div>';
       $('#tttDone').addEventListener('click', function(){
@@ -2064,9 +2120,7 @@ RUN.tttFree=function(opt){
     if(out.hearts>=2) sfx.win(); else sfx.lose();
     const box=$('#tttEnd');
     box.innerHTML='<div class="ttt-endcard">'+
-        '<span class="face">'+out.emoji+'</span>'+
-        '<div class="msg">'+out.title+'</div>'+
-        '<small>판을 천천히 보고 눌러도 좋아</small>'+
+        '<div class="row"><span class="face">'+out.emoji+'</span><span class="msg">'+out.title+'</span></div>'+
         '<button class="bigbtn primary" id="tttDone">✅ 끝내기</button>'+
       '</div>';
     $('#tttDone').addEventListener('click', function(){ sfx.tap(); finish(out); });
@@ -2161,25 +2215,25 @@ const SNACK_CATS=[
 ];
 const SNACK_PRAISE=['우와 진짜 맛있겠다!','모양이 정말 예쁘다!','냄새까지 좋을 것 같아!','이야 진짜 잘 만들었다!','보기만 해도 군침 도네!'];
 RUN.snack=function(){
-  let catIdx=0, selected=null, count=0, warned=false;
+  let catIdx=0, selected=null, count=0, warned=false, delMode=false;
   const SNACK_MAX = data.snackMax || 50;
   say('먹고 싶은 간식을 예쁘게 담아보자');
 
   $('#stage').innerHTML=
     '<div class="snack-wrap" id="snackWrap"><div class="snack-rim">'+
       '<div class="snack-target" id="snackTarget"></div>'+
+      '<button class="snack-toggle-del" id="snackDelToggle" aria-label="내려놓기(지우기 모드)">🫳</button>'+
     '</div></div>'+
     '<p class="snack-hint" id="snackHint">간식을 먼저 골라 보자!</p>'+
-    '<div class="snack-putdown-row" id="snackPutRow"></div>'+
     '<div class="snack-tabs" id="snackTabs"></div>'+
     '<div class="snack-palette" id="snackPalette"></div>'+
     '<div class="btn-row" id="snackDoneRow" style="display:none">'+
       '<button class="bigbtn primary" id="snackDone">🍽️ 완성!</button>'+
     '</div>'+
     '<div id="snackEnd"></div>';
-  setHead('<span class="banner">🍽️ 접시를 예쁘게 채워 보자</span>');
+  setHead('');
 
-  const tabsEl=$('#snackTabs'), paletteEl=$('#snackPalette'), hint=$('#snackHint');
+  const tabsEl=$('#snackTabs'), paletteEl=$('#snackPalette'), hint=$('#snackHint'), delToggle=$('#snackDelToggle');
   SNACK_CATS.forEach(function(c,i){
     const b=el('button','snack-tab'+(i===0?' sel':''),
       '<span class="ico">'+c.tab+'</span><span class="lbl">'+c.label+'</span>');
@@ -2187,19 +2241,27 @@ RUN.snack=function(){
       if(i===catIdx) return;
       sfx.tap();
       catIdx=i; selected=null;
+      if(delMode) setDelMode(false);
       hint.textContent='간식을 먼저 골라 보자!';
       drawTabs(); drawPalette();
     });
     tabsEl.appendChild(b);
   });
-  const putDown=el('button','snack-putdown','<span class="ico">🫳</span><span class="lbl">내려놓기</span>');
-  putDown.addEventListener('click', function(){
-    if(!target.lastElementChild) return;
-    target.lastElementChild.remove();
-    count--; warned=false; sfx.tap();
-    updateDone();
-  });
-  $('#snackPutRow').appendChild(putDown);
+  function setDelMode(v){
+    delMode=v;
+    delToggle.classList.toggle('on', delMode);
+    if(delMode){
+      selected=null;
+      const all=paletteEl.querySelectorAll('.snack-item-btn');
+      for(let i=0;i<all.length;i++) all[i].classList.remove('sel');
+      hint.textContent='지우고 싶은 간식을 눌러보자!';
+      paletteEl.style.opacity='.4'; paletteEl.style.pointerEvents='none';
+    }else{
+      paletteEl.style.opacity=''; paletteEl.style.pointerEvents='';
+      hint.textContent='간식을 먼저 골라 보자!';
+    }
+  }
+  delToggle.addEventListener('click', function(){ sfx.tap(); setDelMode(!delMode); });
 
   function drawTabs(){
     const all=tabsEl.querySelectorAll('.snack-tab');
@@ -2224,6 +2286,11 @@ RUN.snack=function(){
 
   const target=$('#snackTarget');
   target.addEventListener('click', function(e){
+    if(delMode){
+      const piece=e.target.closest('.snack-piece');
+      if(piece){ piece.remove(); count--; sfx.tap(); updateDone(); }
+      return;
+    }
     if(!selected){ sfx.tap(); return; }
     if(count>=SNACK_MAX){
       if(!warned){ warned=true; sfx.bad(); say('너무 많아!'); toast('접시가 가득 찼어요 🍽️'); }
@@ -2247,8 +2314,9 @@ RUN.snack=function(){
 
   $('#snackDone').addEventListener('click', function(){
     sfx.tap(); sfx.fanfare(); say(pick(SNACK_PRAISE));
+    delMode=false;
     $('#snackTabs').style.display='none';
-    $('#snackPutRow').style.display='none';
+    $('#snackDelToggle').style.display='none';
     $('#snackPalette').style.display='none';
     $('#snackDoneRow').style.display='none';
     hint.style.display='none';
