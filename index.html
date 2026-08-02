@@ -69,6 +69,8 @@ button{color:var(--ink)}
 .slot{aspect-ratio:1;border-radius:50%;background:#3E3557;display:grid;place-items:center;
   font-size:clamp(11px,3.2vw,17px)}
 .slot.on{background:#FFC93C}
+@keyframes starPopOut{0%{transform:scale(1);opacity:1}100%{transform:scale(.2) translateY(-14px);opacity:0}}
+.slot.pop-out{animation:starPopOut .45s ease-in forwards}
 
 .cat{display:flex;align-items:center;gap:8px;margin:0 4px 12px;flex-wrap:wrap}
 .cat-ico{font-size:26px}
@@ -314,6 +316,44 @@ button{color:var(--ink)}
 .pcell.filled{background:#B7F0CE}
 .patbtn{font-size:clamp(40px,13vw,64px)}
 
+/* 장보기 놀이 */
+.shop-item{font-family:'Jua',sans-serif;font-size:22px}
+.shop-item .ico{font-size:40px;display:block;margin-bottom:4px}
+.shop-price{font-family:'Jua',sans-serif;font-size:clamp(30px,9vw,42px);color:var(--coral);margin-top:6px}
+.shop-compare{text-align:center;font-family:'Jua',sans-serif;font-size:17px;line-height:1.5;
+  background:#F4F1FF;border:4px solid var(--ink);border-radius:18px;padding:10px 12px;margin:14px 0}
+.shop-compare b{font-size:19px}
+.shop-compare.under{background:#FFF0CC}
+.shop-compare.over{background:#FFD3CC}
+.shop-compare.match{background:#CFF3E3}
+.shop-paid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:38px}
+.shop-zone{border:4px solid var(--ink);border-radius:18px;padding:10px 10px 12px;margin-bottom:12px}
+.zone-label{font-family:'Jua',sans-serif;font-size:14px;margin-bottom:8px;opacity:.75}
+.paid-zone{background:#F2FBF6}
+.wallet-zone{background:#FFF9EC}
+.paid-chip{font-family:'Jua',sans-serif;font-size:14px;border:3px solid var(--ink);border-radius:999px;
+  padding:6px 12px;cursor:pointer;box-shadow:0 3px 0 var(--ink);color:#fff}
+.paid-chip.m5000{background:#E85D5D}
+.paid-chip.m1000{background:#4C8DFF}
+.paid-chip.m500{background:#8B7FD1}
+.paid-chip.m100{background:#D4A24C}
+.shop-money-palette{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:16px}
+.money-btn{font-family:'Jua',sans-serif;border:4px solid var(--ink);cursor:pointer;color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-sm);transition:transform .08s, box-shadow .08s}
+.money-btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.money-btn .mv{font-size:17px;line-height:1.1}
+.money-btn .mw{font-size:11px;opacity:.85}
+.money-btn.bill{width:96px;height:58px;border-radius:10px}
+.money-btn.coin{width:64px;height:64px;border-radius:50%}
+.money-btn.m5000{background:linear-gradient(135deg,#F07575,#D9453F)}
+.money-btn.m1000{background:linear-gradient(135deg,#6FA4FF,#3B6FE0)}
+.money-btn.m500{background:linear-gradient(135deg,#A79AE0,#7A6BC7)}
+.money-btn.m100{background:linear-gradient(135deg,#E8B96C,#C6863A)}
+.shop-fb{font-family:'Jua',sans-serif;font-size:18px;text-align:center;padding:10px;border-radius:16px;margin-bottom:10px}
+.shop-fb.ok{background:#CFF3E3}
+.shop-fb.no{background:#FFD3CC}
+
 /* 결과 */
 .result-emoji{font-size:84px;line-height:1;animation:bounce 1s infinite alternate}
 @keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
@@ -385,6 +425,14 @@ button{color:var(--ink)}
 .stat-head{font-family:'Jua',sans-serif;font-size:15px;text-align:left;margin:6px 2px 8px;opacity:.7}
 .stat-total{font-family:'Jua',sans-serif;font-size:17px;background:#E7F1FB;border:3px solid var(--ink);
   border-radius:14px;padding:10px;margin-top:6px}
+.qc-row{border:3px solid var(--ink);border-radius:16px;padding:10px 12px;margin-bottom:10px;background:#fff}
+.qc-label{font-family:'Jua',sans-serif;font-size:16px;margin-bottom:8px}
+.qc-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.qc-btns .tbtn{font-size:14px;padding:9px 4px}
+.qc-row .custom-row input{font-size:15px;padding:8px}
+.qc-row .custom-row button{font-size:14px!important;padding:8px 10px!important}
+.qc-state{font-family:'Jua',sans-serif;font-size:13px;background:#FFF0CC;border:2px solid var(--ink);
+  border-radius:10px;padding:5px 8px;margin-top:6px;text-align:center}
 
 /* 알림 토스트 */
 #toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:70;
@@ -440,6 +488,21 @@ button{color:var(--ink)}
       <h2 id="optTitle">어떻게 할까?</h2>
       <p id="optSub">골라 보자</p>
       <div class="opt-list" id="optList"></div>
+    </div>
+  </section>
+
+  <!-- 별 내기 -->
+  <section id="screen-pay" class="screen">
+    <div class="panel">
+      <h2 id="payTitle">별을 낼까?</h2>
+      <p id="paySub">별을 내면 시작해!</p>
+      <div class="star-bank" style="margin-bottom:22px">
+        <div class="bank-top"><span class="bank-label">내 별</span><span class="bank-num" id="payBankNum">0 / 10</span></div>
+        <div class="bank-slots" id="payBankSlots"></div>
+      </div>
+      <div class="btn-row">
+        <button class="bigbtn primary" id="payBtn">⭐ 별 내기</button>
+      </div>
     </div>
   </section>
 
@@ -534,11 +597,29 @@ button{color:var(--ink)}
       <h3>📊 놀이 기록</h3>
       <div class="btn-row" style="margin-top:0">
         <button class="bigbtn second" id="openStats">기록 보기</button>
-        <button class="bigbtn warn" id="resetPlays">별 개수 초기화</button>
       </div>
-      <p style="font-size:13px;opacity:.6;margin:10px 0 0;text-align:center">
-        초기화하면 홈 화면 놀이별 ⭐가 모두 0이 됩니다</p>
     </div>
+
+    <div class="admin-sec">
+      <h3>🎮 놀이별 설정</h3>
+      <p style="font-size:13px;opacity:.6;margin:0 0 10px;text-align:center">
+        삼목 난이도, 간식 최대 개수, 문제 개수를 게임별로 맞출 수 있어요</p>
+      <div class="btn-row" style="margin-top:0">
+        <button class="bigbtn second" id="openGameSettings">놀이별 설정 열기</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="bigbtn second" id="adminExit">나가기 (홈 화면)</button>
+    </div>
+  </div>
+</div>
+
+<!-- 놀이별 설정 -->
+<div id="gameSettingsPanel" class="overlay" role="dialog" aria-modal="true" aria-label="놀이별 설정">
+  <div class="over-card">
+    <h2 style="margin:0 0 4px">🎮 놀이별 설정</h2>
+    <p style="margin:0 0 14px;font-size:14px;opacity:.65">게임마다 난이도·개수를 맞춰보세요</p>
 
     <div class="admin-sec">
       <h3>🎲 삼목 난이도</h3>
@@ -547,8 +628,22 @@ button{color:var(--ink)}
         쉬움일수록 컴퓨터가 실수를 많이 해요(아이가 이기기 쉬워짐)</p>
     </div>
 
+    <div class="admin-sec">
+      <h3>🍽️ 간식 최대 개수</h3>
+      <div class="custom-row">
+        <input type="number" id="snackMaxInput" min="20" max="100" placeholder="20~100 사이">
+        <button class="bigbtn primary" id="snackMaxApply" style="font-size:17px;padding:12px 18px">확인</button>
+      </div>
+      <div class="admin-state" id="snackMaxState">현재 50개</div>
+    </div>
+
+    <div class="admin-sec">
+      <h3>🔢 문제 개수</h3>
+      <div id="qcList"></div>
+    </div>
+
     <div class="btn-row">
-      <button class="bigbtn second" id="adminExit">나가기 (홈 화면)</button>
+      <button class="bigbtn second" id="gsBack">← 관리로 돌아가기</button>
     </div>
   </div>
 </div>
@@ -559,6 +654,9 @@ button{color:var(--ink)}
     <h2 style="margin:0 0 4px">📊 놀이 기록</h2>
     <p style="margin:0 0 14px;font-size:14px;opacity:.65">지금까지 끝낸 판 수입니다</p>
     <div id="statsBody"></div>
+    <div class="btn-row">
+      <button class="bigbtn warn" id="resetPlays">초기화</button>
+    </div>
     <div class="btn-row">
       <button class="bigbtn second" id="statsBack">← 관리로 돌아가기</button>
     </div>
@@ -642,7 +740,8 @@ function confetti(){
 
 /* ══════════════ 2. 저장 · 별 · 시간제한 ══════════════ */
 const MAX_POOL=10, MAX_PLAY_STARS=5, SAVE_KEY='haesol_playground_v3';
-let data = { pool:0, plays:{}, limitEnd:0, unlimited:false, tttLevel:'normal' };
+let data = { pool:0, plays:{}, limitEnd:0, unlimited:false, tttLevel:'normal', snackMax:50,
+  quizCounts:{hangul:10, english:10, shape:10, math:10, pattern:10, shop:10} };
 
 function load(){
   try{
@@ -655,6 +754,11 @@ function load(){
         data.limitEnd = o.limitEnd||0;
         data.unlimited = !!o.unlimited;
         data.tttLevel = (o.tttLevel==='easy'||o.tttLevel==='hard') ? o.tttLevel : 'normal';
+        data.snackMax = (o.snackMax>=20 && o.snackMax<=100) ? o.snackMax : 50;
+        const qc=o.quizCounts||{};
+        ['hangul','english','shape','math','pattern','shop'].forEach(function(k){
+          data.quizCounts[k] = (qc[k]>=1 && qc[k]<=30) ? qc[k] : 10;
+        });
       }
     }
   }catch(e){}
@@ -709,6 +813,7 @@ const GAMES = [
       {key:'normal',label:'보통',        note:'카드 8장'},
       {key:'hard',  label:'어려움',      note:'카드 12장'},
       {key:'vhard', label:'매우 어려움', note:'카드 16장'}]},
+  {id:'shop',   name:'장보기 놀이', emoji:'🛒', kind:'earn', star:true, color:'#F2A65A'},
   /* 별 쓰기 */
   {id:'ttt',    name:'삼목 놀이',   emoji:'⚫', kind:'spend', color:'#FF9F5C',
     options:[
@@ -839,7 +944,9 @@ function render(route){
   const g=gameById(gid);
   if(!g){ backHome(); return; }
   if(g.options && !opt){ playing=false; openOptions(g); return; }
-  startGame(g, g.options?opt:null);
+  const finalOpt=g.options?opt:null;
+  if(g.kind==='spend' && !data.unlimited){ openPay(g, finalOpt); }
+  else{ startGame(g, finalOpt); }
 }
 function openOptions(g){
   current={game:g,opt:null};
@@ -856,13 +963,39 @@ function openOptions(g){
   });
   show('options', g.name);
 }
+function openPay(g,opt){
+  if(timeUp()){ sfx.bad(); say('시간이 다 됐어'); backHome(); return; }
+  if(data.pool<=0){ sfx.bad(); say('별을 모아보자'); backHome(); showNeedStar(); return; }
+  current={game:g,opt:opt};
+  playing=false;
+  show('pay', g.name);
+  $('#payTitle').textContent=g.emoji+' '+g.name;
+  $('#paySub').textContent='별을 내면 시작해!';
+  $('#payBtn').textContent='⭐ 별 내기';
+  $('#payBtn').disabled=false;
+  drawPayBank();
+}
+function drawPayBank(){
+  $('#payBankNum').textContent = data.pool+' / '+MAX_POOL;
+  let slots='';
+  for(let i=0;i<MAX_POOL;i++) slots+='<div class="slot'+(i<data.pool?' on':'')+'">'+(i<data.pool?'⭐':'')+'</div>';
+  $('#payBankSlots').innerHTML=slots;
+}
+$('#payBtn').addEventListener('click', function(){
+  if(!current || $('#payBtn').disabled) return;
+  $('#payBtn').disabled=true;
+  const g=current.game, opt=current.opt;
+  const onSlots=$('#payBankSlots').querySelectorAll('.slot.on');
+  const last=onSlots[onSlots.length-1];
+  sfx.spend();
+  if(last) last.classList.add('pop-out');
+  setPool(data.pool-1);
+  $('#payBankNum').textContent = data.pool+' / '+MAX_POOL;
+  toast('⭐ 별 하나 냈어요 · 남은 별 '+data.pool+'개', 2000);
+  gTimeout(function(){ startGame(g,opt); }, 480);
+});
 function startGame(g,opt){
   if(timeUp()){ sfx.bad(); say('시간이 다 됐어'); backHome(); return; }
-  if(g.kind==='spend' && !data.unlimited){
-    if(data.pool<=0){ sfx.bad(); say('별을 모아보자'); backHome(); showNeedStar(); return; }
-    setPool(data.pool-1);
-    sfx.spend(); toast('⭐ 별 하나 썼어요 · 남은 별 '+data.pool+'개', 2200);
-  }
   current={game:g,opt:opt};
   playing=true;
   show('play', g.name);
@@ -908,7 +1041,10 @@ function finish(o){
 }
 $('#btnAgain').addEventListener('click', function(){
   sfx.tap();
-  if(current) startGame(current.game, current.opt);
+  if(!current) return;
+  const g=current.game, opt=current.opt;
+  if(g.kind==='spend' && !data.unlimited){ openPay(g,opt); }
+  else{ startGame(g,opt); }
 });
 $('#btnBackHome').addEventListener('click', function(){ sfx.tap(); go('home'); });
 $('#btnHome').addEventListener('click', function(){
@@ -945,7 +1081,7 @@ let pinBuf='';
     const b=el('button','tbtn',p[1]);
     b.dataset.lvl=p[0];
     b.addEventListener('click', function(){
-      data.tttLevel=p[0]; save(); sfx.tap(); refreshAdmin();
+      data.tttLevel=p[0]; save(); sfx.tap(); refreshGameSettings();
     });
     lvlRow.appendChild(b);
   });
@@ -989,8 +1125,6 @@ function refreshAdmin(){
   const left=limitLeft();
   $('#limitState').textContent = !data.limitEnd ? '제한 없음'
     : (left<=0 ? '시간이 끝나 잠긴 상태' : '남은 시간 약 '+Math.ceil(left/60000)+'분');
-  const lvlBtns=$('#tttLevelRow').querySelectorAll('.tbtn');
-  for(let i=0;i<lvlBtns.length;i++) lvlBtns[i].classList.toggle('sel', lvlBtns[i].dataset.lvl===data.tttLevel);
   renderHome();
 }
 $('#unlimitedToggle').addEventListener('click', function(){
@@ -1008,6 +1142,79 @@ $('#limitClear').addEventListener('click', function(){ clearLimit(); refreshAdmi
 $('#adminExit').addEventListener('click', function(){
   $('#adminPanel').classList.remove('show');
   playing=false; go('home');
+});
+
+/* 놀이별 설정 */
+const QUIZ_GAMES=[
+  {id:'hangul', name:'🅰️ 한글 맞추기'},
+  {id:'english',name:'🔤 영어 단어'},
+  {id:'shape',  name:'🔷 도형 찾기'},
+  {id:'math',   name:'➕ 숫자 계산'},
+  {id:'pattern',name:'🔁 규칙 찾기'},
+  {id:'shop',   name:'🛒 장보기 놀이'}
+];
+(function initQC(){
+  const list=$('#qcList');
+  QUIZ_GAMES.forEach(function(qg){
+    const row=el('div','qc-row');
+    row.dataset.id=qg.id;
+    row.innerHTML=
+      '<div class="qc-label">'+qg.name+'</div>'+
+      '<div class="qc-btns">'+
+        '<button class="tbtn" data-n="3">3개</button>'+
+        '<button class="tbtn" data-n="5">5개</button>'+
+        '<button class="tbtn" data-n="10">10개</button>'+
+      '</div>'+
+      '<div class="custom-row">'+
+        '<input type="number" class="qc-input" min="1" max="30" placeholder="직접입력(1~30)">'+
+        '<button class="bigbtn primary qc-apply">확인</button>'+
+      '</div>'+
+      '<div class="qc-state">현재 10개</div>';
+    row.querySelectorAll('.qc-btns .tbtn').forEach(function(b){
+      b.addEventListener('click', function(){
+        setQuizCount(qg.id, parseInt(b.dataset.n,10));
+      });
+    });
+    row.querySelector('.qc-apply').addEventListener('click', function(){
+      const inp=row.querySelector('.qc-input');
+      const v=parseInt(inp.value,10);
+      if(v>=1&&v<=30){ setQuizCount(qg.id, v); inp.value=''; }
+      else toast('1~30 사이 숫자를 넣어주세요');
+    });
+    list.appendChild(row);
+  });
+})();
+function setQuizCount(id,n){
+  data.quizCounts[id]=n; save(); sfx.tap(); refreshGameSettings();
+  toast(id+' 문제 개수를 '+n+'개로 바꿨어요');
+}
+function refreshGameSettings(){
+  const lvlBtns=$('#tttLevelRow').querySelectorAll('.tbtn');
+  for(let i=0;i<lvlBtns.length;i++) lvlBtns[i].classList.toggle('sel', lvlBtns[i].dataset.lvl===data.tttLevel);
+  $('#snackMaxState').textContent='현재 '+data.snackMax+'개';
+  const rows=$('#qcList').querySelectorAll('.qc-row');
+  for(let i=0;i<rows.length;i++){
+    const id=rows[i].dataset.id, n=qCount(id);
+    rows[i].querySelector('.qc-state').textContent='현재 '+n+'개';
+    rows[i].querySelectorAll('.qc-btns .tbtn').forEach(function(b){
+      b.classList.toggle('sel', parseInt(b.dataset.n,10)===n);
+    });
+  }
+}
+$('#openGameSettings').addEventListener('click', function(){
+  $('#adminPanel').classList.remove('show');
+  $('#gameSettingsPanel').classList.add('show');
+  refreshGameSettings();
+});
+$('#gsBack').addEventListener('click', function(){
+  $('#gameSettingsPanel').classList.remove('show');
+  $('#adminPanel').classList.add('show');
+  refreshAdmin();
+});
+$('#snackMaxApply').addEventListener('click', function(){
+  const v=parseInt($('#snackMaxInput').value,10);
+  if(v>=20&&v<=100){ data.snackMax=v; save(); $('#snackMaxInput').value=''; refreshGameSettings(); toast('간식 최대 개수를 '+v+'개로 바꿨어요'); }
+  else toast('20~100 사이 숫자를 넣어주세요');
 });
 
 /* 놀이 기록 */
@@ -1042,12 +1249,12 @@ $('#resetPlays').addEventListener('click', function(){
     resetArm=true; b.textContent='정말 지울까요? 다시 누르기';
     clearTimeout($('#resetPlays').t);
     $('#resetPlays').t=setTimeout(function(){
-      resetArm=false; b.textContent='별 개수 초기화';
+      resetArm=false; b.textContent='초기화';
     },4000);
     return;
   }
-  resetArm=false; b.textContent='별 개수 초기화';
-  data.plays={}; save(); refreshAdmin();
+  resetArm=false; b.textContent='초기화';
+  data.plays={}; save(); refreshAdmin(); renderStats();
   toast('놀이별 ⭐를 모두 지웠어요');
 });
 
@@ -1128,6 +1335,13 @@ function quiz(cfg){
 function grade(solved,total,g3,g2){
   return solved>=g3?3:(solved>=g2?2:1);
 }
+function gradeStd(solved,total){
+  return grade(solved,total,Math.ceil(total*0.8),Math.ceil(total*0.5));
+}
+function qCount(id){
+  const n=data.quizCounts && data.quizCounts[id];
+  return (n>=1 && n<=30) ? n : 10;
+}
 
 const RUN={};
 
@@ -1148,7 +1362,7 @@ const WORDS=[
   ['계란','🥚'],['집','🏠'],['불','🔥'],['물','💧'],['눈','👀'],['손','✋'],['하트','💗']
 ];
 RUN.hangul=function(){
-  const TOTAL=10, pool=shuffle(WORDS).slice(0,TOTAL);
+  const TOTAL=qCount('hangul'), pool=shuffle(WORDS).slice(0,TOTAL);
   quiz({
     total:TOTAL, banner:'무슨 그림일까?', hint:'글자를 보고 골라 보자',
     allowWrong:1, maxWrong:2, rightDelay:1600,
@@ -1166,7 +1380,7 @@ RUN.hangul=function(){
     onCorrect:function(c,ctx){ say(c.word,'ko-KR',0.85); },
     done:function(r){
       finish({emoji:'🅰️', title:'글자를 잘 읽었어!',
-        hearts:grade(r.solved,TOTAL,8,6),
+        hearts:gradeStd(r.solved,TOTAL),
         sub:'두 번 안에 맞춘 낱말 '+r.solved+' / '+TOTAL});
     }
   });
@@ -1190,7 +1404,7 @@ const EN_WORDS=[
   ['cry','😭','울다'],['laugh','😂','웃다'],['clap','👏','박수치다'],['wash','🧼','씻다']
 ];
 RUN.english=function(){
-  const TOTAL=10, pool=shuffle(EN_WORDS).slice(0,TOTAL);
+  const TOTAL=qCount('english'), pool=shuffle(EN_WORDS).slice(0,TOTAL);
   const en=function(w){ say(w,'en-US',0.75); };
   const card=function(it,ctx){
     ctx.extra.innerHTML='<div class="learn-card"><span class="big">'+it[1]+'</span>'+it[0]+' — '+it[2]+'</div>';
@@ -1224,7 +1438,7 @@ RUN.english=function(){
     onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent=ctx.q.item[0]+' — '+ctx.q.item[2]; },
     done:function(r){
       finish({emoji:'🔤', title:'영어 단어를 배웠어!',
-        hearts:grade(r.solved,TOTAL,7,5),
+        hearts:gradeStd(r.solved,TOTAL),
         sub:'세 번 안에 맞춘 단어 '+r.solved+' / '+TOTAL});
     }
   });
@@ -1235,7 +1449,7 @@ function beadsHTML(a,b){
   return '<div class="beads">'+rep('<div class="bead a"></div>',a)+rep('<div class="bead b"></div>',b)+'</div>';
 }
 RUN.math=function(opt){
-  const TOTAL=10;
+  const TOTAL=qCount('math');
   const sign=function(op){ return op==='+'?'＋':'－'; };
   function makeQ(){
     let a,b,op,ans;
@@ -1297,7 +1511,7 @@ RUN.math=function(opt){
     onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent='정답은 '+ctx.q.ans+'이야'; },
     done:function(r){
       finish({emoji:'🧮', title:'계산 척척!',
-        hearts:grade(r.solved,TOTAL,8,6),
+        hearts:gradeStd(r.solved,TOTAL),
         sub:'두 번 안에 맞춘 문제 '+r.solved+' / '+TOTAL});
     }
   });
@@ -1328,8 +1542,9 @@ const PAT_CFG={                       // 반복 길이 / 문제 수 (칸은 6×2
 const PAT_COLS=6, PAT_MAX=12;
 RUN.pattern=function(opt){
   const cfg=PAT_CFG[opt||'easy'];
+  const TOTAL=qCount('pattern');
   quiz({
-    total:cfg.total, banner:'다음에 올 건 뭘까?', hint:'규칙을 찾아봐',
+    total:TOTAL, banner:'다음에 올 건 뭘까?', hint:'규칙을 찾아봐',
     allowWrong:1, maxWrong:2, confirmAfterFail:true, confirmDelay:1400,
     revealText:'초록색 정답을 눌러 보자',
     make:function(){
@@ -1364,8 +1579,8 @@ RUN.pattern=function(opt){
     onConfirm:function(c,ctx){ sfx.good(); ctx.text.textContent='이게 규칙이야!'; },
     done:function(r){
       finish({emoji:'🔁', title:'규칙을 찾았어!',
-        hearts:grade(r.solved,cfg.total,Math.ceil(cfg.total*0.9),Math.ceil(cfg.total*0.7)),
-        sub:'두 번 안에 맞춘 문제 '+r.solved+' / '+cfg.total});
+        hearts:gradeStd(r.solved,TOTAL),
+        sub:'두 번 안에 맞춘 문제 '+r.solved+' / '+TOTAL});
     }
   });
   function fill(ctx){
@@ -1390,7 +1605,7 @@ function svgShape(shape,color,cls){
     '<g fill="'+color+'" stroke="#2B2140" stroke-width="5" stroke-linejoin="round">'+SHAPES[shape]+'</g></svg>';
 }
 RUN.shape=function(opt){
-  const TOTAL=10;
+  const TOTAL=qCount('shape');
   const count = opt==='easy'?4:(opt==='normal'?9:20);
   const vhard = opt==='vhard';
   const COLORS = vhard?SHAPE_COLORS_V:SHAPE_COLORS;
@@ -1425,10 +1640,165 @@ RUN.shape=function(opt){
     rightDelay:450,
     done:function(r){
       finish({emoji:'🔷', title:'도형 박사!',
-        hearts: r.wrong===0?3:(r.wrong<=3?2:1),
-        sub:'틀린 횟수 '+r.wrong+'번'});
+        hearts: gradeStd(r.solved,TOTAL),
+        sub:'정답 '+r.solved+' / '+TOTAL+' (틀린 횟수 '+r.wrong+'번)'});
     }
   });
+};
+
+/* ══════════════ 12b. 장보기 놀이 ══════════════ */
+const SHOP_ITEMS=[
+  {e:'🍎',n:'사과'},{e:'🍌',n:'바나나'},{e:'🥛',n:'우유'},{e:'🍞',n:'빵'},
+  {e:'🍭',n:'막대사탕'},{e:'🧃',n:'주스'},{e:'🎈',n:'풍선'},{e:'⚽',n:'공'},
+  {e:'🖍️',n:'크레파스'},{e:'📖',n:'동화책'},{e:'🧸',n:'인형'},{e:'🍦',n:'아이스크림'},
+  {e:'🎨',n:'물감'},{e:'🧦',n:'양말'},{e:'☂️',n:'우산'}
+];
+const SHOP_MONEY=[
+  {v:5000, cls:'bill m5000'},
+  {v:1000, cls:'bill m1000'},
+  {v:500,  cls:'coin m500'},
+  {v:100,  cls:'coin m100'}
+];
+function won(n){ return n.toLocaleString('ko-KR')+'원'; }
+function josa(word,withB,noB){
+  const ch=word[word.length-1];
+  const code=ch.charCodeAt(0)-0xAC00;
+  if(code<0||code>11171) return noB;
+  return (code%28)!==0 ? withB : noB;
+}
+const SHOP_PRICE_POOL=(function(){
+  const pool=[];
+  for(let p=100;p<=5000;p+=100){
+    let rem=p, n=0;
+    [5000,1000,500,100].forEach(function(c){ n+=Math.floor(rem/c); rem%=c; });
+    const w = n<=3 ? 5 : (n<=5 ? 2 : 1);   // 3개 이하 자주, 6개 이상 드물게
+    for(let i=0;i<w;i++) pool.push(p);
+  }
+  return pool;
+})();
+function pickShopPrice(){ return pick(SHOP_PRICE_POOL); }
+RUN.shop=function(){
+  const TOTAL=qCount('shop');
+  let round=0, solved=0, price=0, paid=0, chosen=[], tries=0, over=false, curItem=null;
+  next();
+
+  function next(){
+    if(round>=TOTAL){
+      finish({emoji:'🛒', title:'장보기 완료!',
+        hearts:gradeStd(solved,TOTAL),
+        sub:'정확히 낸 문제 '+solved+' / '+TOTAL});
+      return;
+    }
+    round++;
+    const item=pick(SHOP_ITEMS);
+    curItem=item;
+    price=pickShopPrice();
+    paid=0; chosen=[]; tries=0; over=false;
+    render(item);
+  }
+
+  function render(item){
+    setHead(pips(round-1,TOTAL)+'<span class="banner">돈을 딱 맞춰 내보자</span>');
+    $('#stage').innerHTML=
+      '<div class="prompt-box">'+
+        '<div class="shop-item"><span class="ico">'+item.e+'</span>'+item.n+' 사기</div>'+
+        '<div class="shop-price">'+won(price)+'</div>'+
+        '<button class="chip" id="shopHearBtn" style="margin-top:8px">🔊 다시 듣기</button>'+
+      '</div>'+
+      '<div class="shop-compare" id="shopCompare"></div>'+
+      '<div class="shop-zone paid-zone">'+
+        '<div class="zone-label">💰 낸 돈</div>'+
+        '<div class="shop-paid" id="shopPaid"></div>'+
+      '</div>'+
+      '<div class="shop-zone wallet-zone">'+
+        '<div class="zone-label">👛 내 지갑</div>'+
+        '<div class="shop-money-palette" id="shopMoney"></div>'+
+      '</div>'+
+      '<div id="shopResult"></div>'+
+      '<div class="btn-row" id="shopPayRow">'+
+        '<button class="bigbtn primary" id="shopPayBtn">💰 돈 내기</button>'+
+      '</div>'+
+      '<div class="btn-row" id="shopNextRow" style="display:none">'+
+        '<button class="bigbtn primary" id="shopNextBtn">▶️ 다음 문제</button>'+
+      '</div>';
+    speak();
+    $('#shopHearBtn').addEventListener('click', function(){ speak(); });
+
+    const moneyEl=$('#shopMoney');
+    SHOP_MONEY.forEach(function(m){
+      const b=el('button','money-btn '+m.cls,'<span class="mv">'+m.v.toLocaleString('ko-KR')+'</span><span class="mw">원</span>');
+      b.addEventListener('click', function(){
+        if(over) return;
+        chosen.push(m.v); paid+=m.v; sfx.tap();
+        updateCompare(); renderPaid();
+      });
+      moneyEl.appendChild(b);
+    });
+    $('#shopPayBtn').addEventListener('click', function(){
+      if(over) return;
+      checkAnswer();
+    });
+    updateCompare(); renderPaid();
+  }
+
+  function speak(){
+    say(curItem.n+josa(curItem.n,'은','는')+' '+won(price)+'이야!');
+  }
+
+  function renderPaid(){
+    const box=$('#shopPaid');
+    box.innerHTML='';
+    chosen.forEach(function(v,idx){
+      const m=SHOP_MONEY.filter(function(x){ return x.v===v; })[0];
+      const chip=el('span','paid-chip '+m.cls, won(v));
+      chip.addEventListener('click', function(){
+        if(over) return;
+        chosen.splice(idx,1); paid-=v; sfx.tap();
+        updateCompare(); renderPaid();
+      });
+      box.appendChild(chip);
+    });
+  }
+
+  function updateCompare(){
+    const c=$('#shopCompare');
+    const hint = paid===price ? '✅ 딱 맞아!' : (paid>price ? '🔺 너무 많아' : '더 필요해');
+    c.innerHTML='낸 돈 '+won(paid)+' / 가격 '+won(price)+'<br><b>'+hint+'</b>';
+    c.className='shop-compare '+(paid===price?'match':(paid>price?'over':'under'));
+  }
+
+  function exampleCombo(p){
+    let rem=p, parts=[];
+    [5000,1000,500,100].forEach(function(v){
+      const n=Math.floor(rem/v);
+      if(n>0){ parts.push(n+'×'+won(v)); rem-=n*v; }
+    });
+    return parts.join(' + ');
+  }
+
+  function showNext(){
+    $('#shopPayRow').style.display='none';
+    $('#shopNextRow').style.display='flex';
+    $('#shopNextBtn').addEventListener('click', function(){ sfx.tap(); next(); });
+  }
+
+  function checkAnswer(){
+    if(paid===price){
+      solved++; sfx.good(); over=true;
+      $('#shopResult').innerHTML='<div class="shop-fb ok">🎉 딱 맞았어!</div>';
+      showNext();
+    }else{
+      tries++; sfx.bad();
+      if(tries>=2){
+        over=true;
+        $('#shopResult').innerHTML='<div class="shop-fb no">아쉬워! 예를 들면 '+exampleCombo(price)+'로 낼 수 있어</div>';
+        showNext();
+      }else{
+        $('#shopResult').innerHTML='<div class="shop-fb no">'+(paid>price?'너무 많이 냈어, 다시 골라볼까?':'조금 부족해, 다시 골라볼까?')+'</div>';
+        gTimeout(function(){ if(!over) $('#shopResult').innerHTML=''; }, 1600);
+      }
+    }
+  }
 };
 
 /* ══════════════ 13. 짝 맞추기 ══════════════ */
@@ -1738,9 +2108,9 @@ RUN.rps=function(){
     else cpuPick=Object.keys(BEATS).filter(function(k){ return BEATS[k]===mine.k; })[0];
     h.textContent=RPS.filter(function(o){ return o.k===cpuPick; })[0].e;
 
-    if(outcome==='win'){ me++; sfx.good(); $('#rpsMsg').textContent='이겼다! 🎉'; }
-    else if(outcome==='draw'){ sfx.flip(); $('#rpsMsg').textContent='비겼네 🤝'; }
-    else { cpu++; sfx.bad(); $('#rpsMsg').textContent='컴퓨터가 이겼어 😮'; }
+    if(outcome==='win'){ me++; sfx.good(); $('#rpsMsg').textContent='이겼다! 🎉'; say('이겼다!'); }
+    else if(outcome==='draw'){ sfx.flip(); $('#rpsMsg').textContent='비겼네 🤝'; say('비겼다!'); }
+    else { cpu++; sfx.bad(); $('#rpsMsg').textContent='컴퓨터가 이겼어 😮'; say('졌다!'); }
     lights();
 
     gTimeout(function(){
@@ -1763,10 +2133,11 @@ const SNACK_CATS=[
   {key:'deco',  label:'장식', tab:'⭐', items:[
     {e:'⭐',s:0.8},{e:'🌟',s:0.8},{e:'💗',s:0.75},{e:'🎀',s:0.9},{e:'🕯️',s:1.2},{e:'🌈',s:0.8},{e:'🍬',s:0.75},{e:'🍭',s:0.95}]}
 ];
-const SNACK_MAX=40;
 const SNACK_PRAISE=['우와 진짜 맛있겠다!','모양이 정말 예쁘다!','냄새까지 좋을 것 같아!','이야 진짜 잘 만들었다!','보기만 해도 군침 도네!'];
 RUN.snack=function(){
   let catIdx=0, selected=null, count=0, warned=false;
+  const SNACK_MAX = data.snackMax || 50;
+  say('먹고 싶은 간식을 예쁘게 담아보자');
 
   $('#stage').innerHTML=
     '<div class="snack-wrap" id="snackWrap"><div class="snack-rim">'+
@@ -1829,7 +2200,7 @@ RUN.snack=function(){
   target.addEventListener('click', function(e){
     if(!selected){ sfx.tap(); return; }
     if(count>=SNACK_MAX){
-      if(!warned){ warned=true; sfx.bad(); say('앗 접시가 꽉 찼어!'); toast('접시가 가득 찼어요 🍽️'); }
+      if(!warned){ warned=true; sfx.bad(); say('너무 많아!'); toast('접시가 가득 찼어요 🍽️'); }
       return;
     }
     const rect=target.getBoundingClientRect();
@@ -1851,6 +2222,7 @@ RUN.snack=function(){
   $('#snackDone').addEventListener('click', function(){
     sfx.tap(); sfx.fanfare(); say(pick(SNACK_PRAISE));
     $('#snackTabs').style.display='none';
+    $('#snackPutRow').style.display='none';
     $('#snackPalette').style.display='none';
     $('#snackDoneRow').style.display='none';
     hint.style.display='none';
