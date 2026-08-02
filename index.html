@@ -824,7 +824,8 @@ const GAMES = [
       {key:'easy',  label:'쉬움',        note:'4개 중에서 찾기'},
       {key:'normal',label:'보통',        note:'9개 중에서 찾기'},
       {key:'hard',  label:'어려움',      note:'20개 중에서 찾기'},
-      {key:'vhard', label:'매우 어려움', note:'20개 · 비슷한 것끼리'}]},
+      {key:'vhard', label:'매우 어려움', note:'20개 · 비슷한 것끼리'},
+      {key:'hell',  label:'지옥의 맛',   note:'색깔이 거의 똑같아!'}]},
   {id:'rps',    name:'가위바위보', emoji:'✌️', kind:'spend', color:'#F58FBE'},
   {id:'snack',  name:'간식 접시 꾸미기', emoji:'🍽️', kind:'spend', color:'#FFD6A5'},
   /* 같이 놀기(무료) */
@@ -1604,14 +1605,39 @@ function svgShape(shape,color,cls){
   return '<svg class="'+(cls||'')+'" viewBox="0 0 100 100" aria-hidden="true">'+
     '<g fill="'+color+'" stroke="#2B2140" stroke-width="5" stroke-linejoin="round">'+SHAPES[shape]+'</g></svg>';
 }
+function hellShapeSet(shape,count){
+  const hue=rnd(360), sat=55+rnd(16);           // 같은 색상군(같은 색감) 고정
+  const minL=20, maxL=80;
+  const step=2.15+Math.random()*0.35;           // 인접 명도 차이(아주 살짝 구별 가능한 수준)
+  const spread=step*(count-1);
+  const startL=minL+Math.random()*Math.max(0,(maxL-spread-minL));
+  const values=[];
+  for(let i=0;i<count;i++) values.push(+(startL+i*step).toFixed(2));
+  const targetIdx=rnd(count);
+  return values.map(function(l,i){
+    return {s:shape, c:'hsl('+hue+','+sat+'%,'+l+'%)', isTarget:i===targetIdx};
+  });
+}
 RUN.shape=function(opt){
   const TOTAL=qCount('shape');
   const count = opt==='easy'?4:(opt==='normal'?9:20);
   const vhard = opt==='vhard';
+  const hell = opt==='hell';
   const COLORS = vhard?SHAPE_COLORS_V:SHAPE_COLORS;
   quiz({
     total:TOTAL, banner:'같은 걸 찾아봐', judge:false,
     make:function(){
+      if(hell){
+        const opts=hellShapeSet(pick(SHAPE_KEYS), count);
+        const target=opts.filter(function(o){ return o.isTarget; })[0];
+        return {
+          top:svgShape(target.s,target.c,'target-svg'),
+          gridClass:'shape-grid lots',
+          choices:shuffle(opts).map(function(o){
+            return {cls:'shape-btn', html:svgShape(o.s,o.c), ok:o.isTarget};
+          })
+        };
+      }
       const target={s:pick(SHAPE_KEYS), c:pick(COLORS)};
       const used={}, opts=[target];
       used[target.s+target.c]=1;
