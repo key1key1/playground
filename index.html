@@ -248,7 +248,7 @@ button{color:var(--ink)}
   border:8px solid #fff;border-radius:20px;padding:24px 12px 32px;
   box-shadow:0 10px 0 var(--ink),0 16px 26px rgba(43,33,64,.28);
   transform:rotate(-1.4deg)}
-.snack-rim{position:relative;width:min(84vw,340px);aspect-ratio:1;border-radius:50%;
+.snack-rim{position:relative;width:min(84vw,60vh,480px);aspect-ratio:1;border-radius:50%;
   border:5px solid var(--ink);box-shadow:var(--shadow);
   background:radial-gradient(circle at 50% 50%,#fff 0%,#fff 58%,#EAF2FA 78%,#D9E6F2 100%)}
 .snack-target{position:absolute;inset:5%;border-radius:50%;cursor:pointer;
@@ -1381,7 +1381,16 @@ const WORDS=[
   ['구름','☁️'],['무지개','🌈'],['눈사람','⛄'],['우산','☂️'],['공','⚽'],['풍선','🎈'],['선물','🎁'],
   ['시계','⏰'],['신발','👟'],['모자','🧢'],['가방','🎒'],['책','📚'],['연필','✏️'],['가위','✂️'],
   ['열쇠','🔑'],['우유','🥛'],['빵','🍞'],['케이크','🍰'],['아이스크림','🍦'],['사탕','🍬'],['피자','🍕'],
-  ['계란','🥚'],['집','🏠'],['불','🔥'],['물','💧'],['눈','👀'],['손','✋'],['하트','💗']
+  ['계란','🥚'],['집','🏠'],['불','🔥'],['물','💧'],['눈','👀'],['손','✋'],['하트','💗'],
+  ['엄마','👩'],['아빠','👨'],['아기','👶'],['할머니','👵'],['할아버지','👴'],
+  ['코','👃'],['입','👄'],['귀','👂'],['다리','🦵'],['팔','💪'],
+  ['빨강','🔴'],['파랑','🔵'],['노랑','🟡'],['초록','🟢'],['보라','🟣'],
+  ['봄','🌱'],['여름','🏖️'],['가을','🍂'],['겨울','❄️'],
+  ['농구','🏀'],['야구','⚾'],['배드민턴','🏸'],['볼링','🎳'],
+  ['피아노','🎹'],['기타','🎸'],['드럼','🥁'],['바이올린','🎻'],
+  ['지구','🌍'],['행성','🪐'],['외계인','👽'],['우주비행사','🧑‍🚀'],
+  ['개미','🐜'],['귀뚜라미','🦗'],['거미','🕷️'],['애벌레','🐛'],
+  ['오이','🥒'],['브로콜리','🥦'],['감자','🥔'],['파인애플','🍍']
 ];
 RUN.hangul=function(){
   const TOTAL=qCount('hangul'), pool=shuffle(WORDS).slice(0,TOTAL);
@@ -1424,7 +1433,13 @@ const EN_WORDS=[
   ['run','🏃','달리다'],['jump','🤸','뛰다'],['eat','🍴','먹다'],['drink','🥤','마시다'],
   ['sleep','😴','자다'],['sit','🪑','앉다'],['walk','🚶','걷다'],['swim','🏊','수영하다'],
   ['read','📖','읽다'],['write','✍️','쓰다'],['sing','🎤','노래하다'],['dance','💃','춤추다'],
-  ['cry','😭','울다'],['laugh','😂','웃다'],['clap','👏','박수치다'],['wash','🧼','씻다']
+  ['cry','😭','울다'],['laugh','😂','웃다'],['clap','👏','박수치다'],['wash','🧼','씻다'],
+  ['mom','👩','엄마'],['dad','👨','아빠'],['baby','👶','아기'],['grandma','👵','할머니'],
+  ['nose','👃','코'],['mouth','👄','입'],['ear','👂','귀'],['leg','🦵','다리'],
+  ['red','🔴','빨강'],['blue','🔵','파랑'],['yellow','🟡','노랑'],['green','🟢','초록'],
+  ['cloud','☁️','구름'],['wind','💨','바람'],['hot','🥵','더워'],['cold','🥶','추워'],
+  ['horse','🐴','말'],['sheep','🐑','양'],['tiger','🐯','호랑이'],['turtle','🐢','거북이'],
+  ['bike','🚲','자전거'],['boat','⛵','배'],['rocket','🚀','로켓'],['truck','🚚','트럭']
 ];
 RUN.english=function(){
   const TOTAL=qCount('english'), pool=shuffle(EN_WORDS).slice(0,TOTAL);
@@ -1885,11 +1900,15 @@ RUN.shop=function(){
 };
 
 /* ══════════════ 13. 짝 맞추기 ══════════════ */
-const ANIMALS=['🐶','🐱','🐰','🐻','🐼','🦊','🐯','🦁','🐷','🐸','🐵','🐨','🐮','🐧'];
+const MEMORY_SETS=[
+  ['🐶','🐱','🐰','🐻','🐼','🦊','🐯','🦁','🐷','🐸','🐵','🐨','🐮','🐧'],
+  ['⚽','📚','✏️','🎈','🎁','🔑','⏰','👟','🎨','🧸','👑','💎','🕶️','🎸'],
+  ['🍎','🍌','🍇','🍓','🍉','🍊','🍋','🍑','🍒','🍍','🥝','🍈']
+];
 RUN.memory=function(opt){
   const n = opt==='easy'?6:(opt==='normal'?8:(opt==='hard'?12:16));
   const cols = n===6?3:4;
-  const pairs=shuffle(ANIMALS).slice(0,n/2);
+  const pairs=shuffle(pick(MEMORY_SETS)).slice(0,n/2);
   const deck=shuffle(pairs.concat(pairs));
   let first=null, lock=false, found=0, tries=0;
   $('#stage').innerHTML='<div class="mem-grid" id="mgrid"></div>';
@@ -1950,9 +1969,9 @@ const STONE_BG={
   W:'radial-gradient(circle at 32% 28%,#fff,#d6d6e2 70%)'
 };
 const TTT_LEVELS={
-  easy:  {m3:0.80, m5:0.60},
-  normal:{m3:0.60, m5:0.40},
-  hard:  {m3:0.40, m5:0.20}
+  easy:  {m3:0.70, m5:0.50},
+  normal:{m3:0.50, m5:0.30},
+  hard:  {m3:0.30, m5:0.10}
 };
 function tttSetup(key, vsCpu, score, onEnd){
   const size=key.indexOf('5')>=0?5:3;
@@ -2303,7 +2322,7 @@ RUN.snack=function(){
 
   function addItem(item,xPct,yPct,baseW){
     const piece=el('span','snack-piece',item.e);
-    const base=Math.max(44,Math.min(66,baseW*0.165));
+    const base=Math.max(44,Math.min(90,baseW*0.165));
     piece.style.fontSize=(base*item.s)+'px';
     piece.style.left=xPct+'%'; piece.style.top=yPct+'%';
     piece.style.setProperty('--rot', (rnd(91)-45)+'deg');
